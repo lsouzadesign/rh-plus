@@ -267,6 +267,38 @@
                 });
 
                 loadCards();
+
+                // --- CHAT SIMULATION ---
+                const chatForm = document.getElementById('chat-form');
+                const chatInput = document.getElementById('chat-input');
+                const chatMessages = document.getElementById('chat-messages');
+                let messageCounter = 0;
+
+                if (chatForm) {
+                    chatForm.addEventListener('submit', (e) => {
+                        console.log('Chat form submitted');
+                        e.preventDefault(); // Impede o recarregamento da página
+                        console.log('Default prevented');
+                        const messageText = chatInput.value.trim();
+                        if (messageText === '') return;
+
+                        // Remove placeholder text on first message
+                        if (chatMessages.querySelector('p')) {
+                            chatMessages.innerHTML = '';
+                        }
+
+                        addChatMessage(messageText, 'sent');
+                        chatInput.value = '';
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                        // Simulate a reply
+                        setTimeout(() => {
+                            const replyText = getSimulatedReply();
+                            addChatMessage(replyText, 'received');
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }, 1000 + Math.random() * 500);
+                    });
+                }
             }
 
             function switchView(viewName) {
@@ -422,38 +454,6 @@
                 matchOverlay.classList.add('hidden');
                 matchOverlay.classList.remove('flex');
             });
-
-            // --- CHAT SIMULATION ---
-            const chatForm = document.getElementById('chat-form');
-            const chatInput = document.getElementById('chat-input');
-            const chatMessages = document.getElementById('chat-messages');
-            let messageCounter = 0;
-
-            if (chatForm) {
-                chatForm.addEventListener('submit', (e) => {
-                    console.log('Chat form submitted');
-                    e.preventDefault(); // Impede o recarregamento da página
-                    console.log('Default prevented');
-                    const messageText = chatInput.value.trim();
-                    if (messageText === '') return;
-
-                    // Remove placeholder text on first message
-                    if (chatMessages.querySelector('p')) {
-                        chatMessages.innerHTML = '';
-                    }
-
-                    addChatMessage(messageText, 'sent');
-                    chatInput.value = '';
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-
-                    // Simulate a reply
-                    setTimeout(() => {
-                        const replyText = getSimulatedReply();
-                        addChatMessage(replyText, 'received');
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
-                    }, 1000 + Math.random() * 500);
-                });
-            }
 
             function addChatMessage(text, type) {
                 const messageElement = document.createElement('div');
