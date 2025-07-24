@@ -2,7 +2,6 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 
 type Job = {
   id: number;
@@ -26,7 +25,8 @@ const JobCard: React.FC<JobCardProps> = ({ job, style }) => {
     >
       {/* Conteúdo do Card */}
       <div className="relative h-3/5">
-        <Image src={job.companyLogo} width={400} height={300} className="absolute inset-0 w-full h-full object-cover" alt={job.companyName} />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={job.companyLogo} className="absolute inset-0 w-full h-full object-cover" alt={job.companyName} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
         <div className="absolute bottom-0 left-0 p-6">
           <h2 className="text-2xl font-bold text-white">{job.jobTitle}</h2>
