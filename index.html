@@ -267,6 +267,44 @@
                 });
 
                 loadCards();
+
+                // --- CHAT SIMULATION ---
+                const chatForm = document.getElementById('chat-form');
+                const chatInput = document.getElementById('chat-input');
+                const chatMessages = document.getElementById('chat-messages');
+                let messageCounter = 0;
+
+                if (chatForm) {
+                    chatForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        const messageText = chatInput.value.trim();
+                        if (messageText === '') return;
+
+                        if (chatMessages.querySelector('p')) {
+                            chatMessages.innerHTML = '';
+                        }
+
+                        addChatMessage(messageText, 'sent', chatMessages);
+                        chatInput.value = '';
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                        setTimeout(() => {
+                            const replyText = getSimulatedReply();
+                            addChatMessage(replyText, 'received', chatMessages);
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }, 1000 + Math.random() * 500);
+                    });
+                }
+            }
+
+            function addChatMessage(text, type, container) {
+                const messageElement = document.createElement('div');
+                const bubbleClasses = type === 'sent'
+                    ? 'bg-blue-600 text-white self-end'
+                    : 'bg-white text-slate-800 self-start';
+                messageElement.className = `flex w-full ${type === 'sent' ? 'justify-end' : 'justify-start'}`;
+                messageElement.innerHTML = `<div class="max-w-xs md:max-w-md p-3 rounded-2xl shadow-sm ${bubbleClasses}">${text}</div>`;
+                container.appendChild(messageElement);
             }
 
             function switchView(viewName) {
@@ -423,46 +461,7 @@
                 matchOverlay.classList.remove('flex');
             });
 
-            // --- CHAT SIMULATION ---
-            const chatForm = document.getElementById('chat-form');
-            const chatInput = document.getElementById('chat-input');
-            const chatMessages = document.getElementById('chat-messages');
             let messageCounter = 0;
-
-            if (chatForm) {
-                chatForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const messageText = chatInput.value.trim();
-                    if (messageText === '') return;
-
-                    // Remove placeholder text on first message
-                    if (chatMessages.querySelector('p')) {
-                        chatMessages.innerHTML = '';
-                    }
-
-                    addChatMessage(messageText, 'sent');
-                    chatInput.value = '';
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-
-                    // Simulate a reply
-                    setTimeout(() => {
-                        const replyText = getSimulatedReply();
-                        addChatMessage(replyText, 'received');
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
-                    }, 1000 + Math.random() * 500);
-                });
-            }
-
-            function addChatMessage(text, type) {
-                const messageElement = document.createElement('div');
-                const bubbleClasses = type === 'sent'
-                    ? 'bg-blue-600 text-white self-end'
-                    : 'bg-white text-slate-800 self-start';
-                messageElement.className = `flex w-full ${type === 'sent' ? 'justify-end' : 'justify-start'}`;
-                messageElement.innerHTML = `<div class="max-w-xs md:max-w-md p-3 rounded-2xl shadow-sm ${bubbleClasses}">${text}</div>`;
-                chatMessages.appendChild(messageElement);
-            }
-
             function getSimulatedReply() {
                 const replies = [
                     "Olá! Obrigado pelo contato.",
