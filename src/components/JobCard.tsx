@@ -4,7 +4,6 @@
 import React from 'react';
 import Image from 'next/image';
 
-// Tipos de dados para segurança com TypeScript
 type Job = {
   id: number;
   companyLogo: string;
@@ -14,51 +13,38 @@ type Job = {
   description: string;
 };
 
-// Propriedades do componente JobCard
 type JobCardProps = {
   job: Job;
-  style: React.CSSProperties; // Estilos para animação
+  style: React.CSSProperties;
 };
 
-// Componente para exibir um único card de vaga
 const JobCard: React.FC<JobCardProps> = ({ job, style }) => {
   return (
     <div
-      className="absolute top-0 left-0 w-full h-full bg-white rounded-2xl shadow-lg overflow-hidden transform transition-transform duration-300 ease-in-out"
+      className="swipe-card"
       style={style}
     >
-      {/* Imagem e Título */}
+      {/* Conteúdo do Card */}
       <div className="relative h-3/5">
-        <Image
-          src={job.companyLogo}
-          alt={`${job.companyName} logo`}
-          width={400}
-          height={300}
-          className="absolute inset-0 w-full h-full object-cover"
-          priority // Prioriza o carregamento da imagem visível
-        />
-        {/* Gradiente para legibilidade do texto */}
+        <Image src={job.companyLogo} width={400} height={300} className="absolute inset-0 w-full h-full object-cover" alt={job.companyName} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-        {/* Informações da Vaga */}
         <div className="absolute bottom-0 left-0 p-6">
-          <h2 className="text-3xl font-bold text-white leading-tight">{job.jobTitle}</h2>
-          <p className="text-lg text-gray-200">{job.companyName}</p>
+          <h2 className="text-2xl font-bold text-white">{job.jobTitle}</h2>
+          <p className="text-md text-gray-200">{job.companyName}</p>
         </div>
+        <div className="choice-indicator like">INTERESSE</div>
+        <div className="choice-indicator nope">PASSAR</div>
       </div>
-
-      {/* Detalhes da Vaga */}
-      <div className="p-6 flex-grow flex flex-col justify-between">
-        <div>
-          <h3 className="font-semibold text-gray-800 mb-2 text-md">Competências:</h3>
-          <div className="flex flex-wrap gap-2 mb-4">
+      <div className="p-6 flex-grow flex flex-col">
+        <div className="mb-4">
+          <h3 className="font-semibold text-gray-700 mb-2">Competências:</h3>
+          <div className="flex flex-wrap gap-2">
             {job.skills.map(skill => (
-              <span key={skill} className="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
-                {skill}
-              </span>
+              <span key={skill} className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full">{skill}</span>
             ))}
           </div>
-          <p className="text-gray-600 text-sm leading-relaxed">{job.description}</p>
         </div>
+        <p className="text-gray-600 text-sm flex-grow">{job.description}</p>
       </div>
     </div>
   );
