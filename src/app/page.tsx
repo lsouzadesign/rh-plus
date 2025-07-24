@@ -13,10 +13,10 @@ const jobData = [
 export default function HomePage() {
     const [currentJobs, setCurrentJobs] = useState(jobData);
     const [activePage, setActivePage] = useState('swipe-page');
-    const [matchedJob, setMatchedJob] = useState(null);
+    const [matchedJob, setMatchedJob] = useState<any>(null);
 
-    const deckRef = useRef(null);
-    const activeCardRef = useRef(null);
+    const deckRef = useRef<HTMLDivElement>(null);
+    const activeCardRef = useRef<any>(null);
     const startX = useRef(0);
     const startY = useRef(0);
     const currentX = useRef(0);
@@ -69,7 +69,7 @@ export default function HomePage() {
         }
     };
 
-    const dragStart = (e) => {
+    const dragStart = (e: any) => {
         if (!activeCardRef.current) return;
         isDragging.current = true;
         activeCardRef.current.classList.add('dragging');
@@ -79,7 +79,7 @@ export default function HomePage() {
         currentY.current = startY.current;
     };
 
-    const dragging = (e) => {
+    const dragging = (e: any) => {
         if (!isDragging.current || !activeCardRef.current) return;
         e.preventDefault();
         currentX.current = e.pageX || e.touches[0].pageX;
@@ -105,7 +105,7 @@ export default function HomePage() {
         }
     };
 
-    const updateChoiceIndicator = (diffX) => {
+    const updateChoiceIndicator = (diffX: any) => {
         if (!activeCardRef.current) return;
         const likeIndicator = activeCardRef.current.querySelector('.like');
         const nopeIndicator = activeCardRef.current.querySelector('.nope');
@@ -122,7 +122,7 @@ export default function HomePage() {
         }
     };
 
-    const swipeCard = (direction) => {
+    const swipeCard = (direction: any) => {
         if (!activeCardRef.current) return;
         const jobId = activeCardRef.current.dataset.jobId;
         activeCardRef.current.removeEventListener('mousedown', dragStart);
@@ -147,7 +147,9 @@ export default function HomePage() {
     };
 
     useEffect(() => {
-        createCards();
+        if(deckRef.current) {
+            createCards();
+        }
 
         document.addEventListener('mousemove', dragging);
         document.addEventListener('touchmove', dragging, { passive: false });
