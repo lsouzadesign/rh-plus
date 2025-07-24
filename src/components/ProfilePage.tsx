@@ -28,6 +28,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ activePage }) => {
             <span className="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">React</span>
             <span className="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">Node.js</span>
             <span className="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">TypeScript</span>
+            <span className="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">Next.js</span>
+            <span className="bg-indigo-100 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">SQL</span>
           </div>
         </div>
       </div>

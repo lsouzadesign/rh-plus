@@ -32,6 +32,8 @@ const JobCard: React.FC<JobCardProps> = ({ job, style }) => {
           <h2 className="text-2xl font-bold text-white">{job.jobTitle}</h2>
           <p className="text-md text-gray-200">{job.companyName}</p>
         </div>
+        <div className="choice-indicator like">INTERESSE</div>
+        <div className="choice-indicator nope">PASSAR</div>
       </div>
       <div className="p-6 flex-grow flex flex-col">
         <div className="mb-4">
