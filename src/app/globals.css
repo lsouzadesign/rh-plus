@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f0f2f5;
+  overscroll-behavior-y: contain;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.page {
+  position: absolute;
+  inset: 0;
+  background-color: #f0f2f5;
+}
+
+main {
+  flex-grow: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+footer {
+  flex-shrink: 0;
+}
+
+.swipe-card {
+  position: absolute;
+  width: 90%;
+  max-width: 380px;
+  height: 95%;
+  max-height: 600px;
+  background: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  cursor: grab;
+  touch-action: none;
+}
+
+.swipe-card.dragging {
+  cursor: grabbing;
+  transition: none;
+}
+
+.choice-indicator {
+  position: absolute;
+  top: 40px;
+  left: 20px;
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.75rem;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.choice-indicator.like {
+  background-color: rgba(16, 185, 129, 0.8);
+  transform: rotate(-15deg);
+}
+
+.choice-indicator.nope {
+  right: 20px;
+  left: auto;
+  background-color: rgba(239, 68, 68, 0.8);
+  transform: rotate(15deg);
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.match-animation {
+  animation: zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
