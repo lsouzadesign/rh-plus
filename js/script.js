@@ -137,6 +137,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         });
+
+        const chatInput = document.querySelector('#chat-view input');
+        const sendButton = document.querySelector('#chat-view button');
+        const chatMessages = document.querySelector('#chat-view .overflow-y-auto');
+
+        const sendMessage = () => {
+            const messageText = chatInput.value.trim();
+            if (messageText) {
+                const messageElement = document.createElement('div');
+                messageElement.className = 'flex items-start gap-3 justify-end';
+                messageElement.innerHTML = `
+                    <div class="bg-blue-600 text-white p-3 rounded-lg max-w-xs">
+                        <p class="text-sm">${messageText}</p>
+                    </div>
+                    <img src="${currentUser.photo}" class="w-10 h-10 rounded-full">
+                `;
+                chatMessages.appendChild(messageElement);
+                chatInput.value = '';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        };
+
+        sendButton.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
         loadCards();
     }
 
