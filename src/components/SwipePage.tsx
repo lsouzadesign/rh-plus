@@ -22,6 +22,7 @@ type SwipePageProps = {
 };
 
 const SwipePage: React.FC<SwipePageProps> = ({ jobs, activePage, handleSwipe, dragState, deckRef }) => {
+  console.log('Jobs recebidos na SwipePage:', jobs);
   const activeCardRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
