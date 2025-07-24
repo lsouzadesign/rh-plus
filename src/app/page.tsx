@@ -59,7 +59,9 @@ export default function HomePage() {
                     </div>
                     <p class="text-gray-600 text-sm flex-grow">${job.description}</p>
                 </div>`;
-            deckRef.current.prepend(card);
+            if (deckRef.current) {
+                deckRef.current.prepend(card);
+            }
         });
         updateActiveCard();
     }, [currentJobs, updateActiveCard]);
@@ -88,7 +90,7 @@ export default function HomePage() {
         currentY.current = startY.current;
     }, []);
 
-    const dragging = (e: MouseEvent | TouchEvent) => {
+    const dragging = useCallback((e: MouseEvent | TouchEvent) => {
         if (!isDragging.current || !activeCardRef.current) return;
         e.preventDefault();
         currentX.current = 'pageX' in e ? e.pageX : e.touches[0].pageX;
@@ -98,7 +100,7 @@ export default function HomePage() {
         const rotate = diffX * 0.05;
         activeCardRef.current.style.transform = `translate(${diffX}px, ${diffY}px) rotate(${rotate}deg)`;
         updateChoiceIndicator(diffX);
-    };
+    }, [updateChoiceIndicator]);
 
     const dragEnd = useCallback(() => {
         if (!isDragging.current || !activeCardRef.current) return;
@@ -114,7 +116,7 @@ export default function HomePage() {
         }
     }, [swipeCard]);
 
-    const updateChoiceIndicator = (diffX: number) => {
+    const updateChoiceIndicator = useCallback((diffX: number) => {
         if (!activeCardRef.current) return;
         const likeIndicator = activeCardRef.current.querySelector('.like') as HTMLDivElement;
         const nopeIndicator = activeCardRef.current.querySelector('.nope') as HTMLDivElement;
@@ -129,7 +131,7 @@ export default function HomePage() {
             likeIndicator.style.opacity = '0';
             nopeIndicator.style.opacity = '0';
         }
-    };
+    }, []);
 
     const swipeCard = useCallback((direction: number) => {
         if (!activeCardRef.current) return;
