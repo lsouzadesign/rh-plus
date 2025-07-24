@@ -222,6 +222,14 @@
                             </div>
                         </div>
                     </div>
+                    <div id="connections-view" class="view hidden h-full flex-col bg-slate-50">
+                        <div class="p-4 border-b bg-white flex-shrink-0">
+                            <h1 class="text-xl font-bold text-center text-slate-800">Conexões</h1>
+                        </div>
+                        <div class="flex-1 overflow-y-auto p-4 space-y-4">
+                            <p class="text-center text-slate-500 pt-8">Suas conexões aparecerão aqui.</p>
+                        </div>
+                    </div>
                 `;
                 bottomNav.innerHTML = `
                     <button class="nav-link text-blue-600 py-3 flex flex-col items-center gap-1" data-view="swipe-view"><i data-lucide="layout-grid"></i><span class="text-xs font-medium">Buscar</span></button>
@@ -252,28 +260,24 @@
                 loadCards();
             }
 
-            function switchView(pageId) {
-                // Esconde todas as "páginas" principais
-                document.getElementById('welcome-page').classList.remove('active');
-                document.getElementById('login-page').classList.remove('active');
-                document.getElementById('app').classList.remove('active');
-
-                // Mostra a página solicitada
-                const pageToShow = document.getElementById(pageId);
-                if (pageToShow) {
-                    pageToShow.classList.add('active');
+            function switchView(viewName) {
+                Object.values(views).forEach(v => v.classList.remove('active'));
+                if (views[viewName]) {
+                    views[viewName].classList.add('active');
                 }
             }
 
-            function switchMainView(viewName) {
+            function switchMainView(viewId) {
                 // Esconde todas as views dentro do #main-content
                 document.querySelectorAll('#main-content .view').forEach(view => {
                     view.classList.remove('active');
+                    view.classList.add('hidden'); // Garante que a view seja ocultada
                 });
 
                 // Mostra a view solicitada
-                const viewToShow = document.getElementById(viewName);
+                const viewToShow = document.getElementById(viewId);
                 if (viewToShow) {
+                    viewToShow.classList.remove('hidden');
                     viewToShow.classList.add('active');
                 }
             }
