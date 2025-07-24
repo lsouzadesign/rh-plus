@@ -36,7 +36,11 @@ export default function HomePage() {
 
   // Refs para a lógica de arrastar (substitui getElementById)
   const deckRef = useRef<HTMLDivElement>(null);
-  const dragState = useRef({
+  const dragState = useRef<{
+    isDragging: boolean;
+    startX: number;
+    currentX: number;
+  }>({
     isDragging: false,
     startX: 0,
     currentX: 0,

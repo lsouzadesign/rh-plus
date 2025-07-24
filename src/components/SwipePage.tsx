@@ -18,7 +18,7 @@ type SwipePageProps = {
   activePage: string;
   handleSwipe: (direction: 'left' | 'right') => void;
   dragState: React.MutableRefObject<{ isDragging: boolean; startX: number; currentX: number; }>;
-  deckRef: React.RefObject<HTMLDivElement>;
+  deckRef: React.RefObject<HTMLDivElement> | null;
 };
 
 const SwipePage: React.FC<SwipePageProps> = ({ jobs, activePage, handleSwipe, dragState, deckRef }) => {
@@ -75,7 +75,7 @@ const SwipePage: React.FC<SwipePageProps> = ({ jobs, activePage, handleSwipe, dr
       document.removeEventListener('mouseup', dragEnd);
       document.removeEventListener('touchend', dragEnd);
     };
-  }, [jobs, dragState, handleSwipe]);
+  }, [jobs, dragState, handleSwipe, deckRef]);
 
   return (
     <div id="swipe-page" className={`page flex-col ${activePage === 'swipe-page' ? 'flex' : 'hidden'}`}>
