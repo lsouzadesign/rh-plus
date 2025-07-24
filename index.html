@@ -431,7 +431,7 @@
 
             if (chatForm) {
                 chatForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
+                    e.preventDefault(); // Impede o recarregamento da página
                     const messageText = chatInput.value.trim();
                     if (messageText === '') return;
 
