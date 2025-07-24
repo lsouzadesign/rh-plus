@@ -201,8 +201,14 @@
                         <div class="p-4 border-b bg-white flex-shrink-0">
                             <h1 class="text-xl font-bold text-center text-slate-800">Chat</h1>
                         </div>
-                        <div class="flex-1 overflow-y-auto p-4 space-y-4">
-                            <p class="text-center text-slate-500 pt-8">Ainda não há conversas. Continue buscando para fazer conexões!</p>
+                        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4">
+                            <p class="text-center text-slate-500 pt-8">Envie uma mensagem para iniciar a conversa.</p>
+                        </div>
+                        <div class="p-4 bg-white border-t">
+                            <form id="chat-form" class="flex items-center gap-2">
+                                <input type="text" id="chat-input" placeholder="Digite sua mensagem..." class="w-full px-4 py-2 bg-slate-100 border border-slate-200 rounded-full focus:ring-blue-500 focus:border-blue-500" autocomplete="off">
+                                <button type="submit" class="bg-blue-600 text-white rounded-full p-3 flex-shrink-0"><i data-lucide="send" class="w-5 h-5"></i></button>
+                            </form>
                         </div>
                     </div>
                     <div id="profile-view" class="view hidden h-full flex-col">
@@ -226,8 +232,16 @@
                         <div class="p-4 border-b bg-white flex-shrink-0">
                             <h1 class="text-xl font-bold text-center text-slate-800">Conexões</h1>
                         </div>
-                        <div class="flex-1 overflow-y-auto p-4 space-y-4">
-                            <p class="text-center text-slate-500 pt-8">Suas conexões aparecerão aqui.</p>
+                        <div class="flex-1 overflow-y-auto p-4 grid grid-cols-2 gap-4">
+                            ${[...Array(6)].map(() => `
+                                <div class="relative aspect-square bg-white rounded-lg shadow-sm overflow-hidden">
+                                    <img src="https://placehold.co/200x200/e2e8f0/475569?text=?" class="w-full h-full object-cover filter blur-md">
+                                    <div class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-center p-2">
+                                        <p class="text-white font-semibold">Quer saber quem quer se conectar com você?</p>
+                                        <button class="mt-2 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">Assine o plus</button>
+                                    </div>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
                 `;
@@ -413,6 +427,59 @@
                 matchOverlay.classList.add('hidden');
                 matchOverlay.classList.remove('flex');
             });
+
+            // --- CHAT SIMULATION ---
+            const chatForm = document.getElementById('chat-form');
+            const chatInput = document.getElementById('chat-input');
+            const chatMessages = document.getElementById('chat-messages');
+            let messageCounter = 0;
+
+            if (chatForm) {
+                chatForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const messageText = chatInput.value.trim();
+                    if (messageText === '') return;
+
+                    // Remove placeholder text on first message
+                    if (chatMessages.querySelector('p')) {
+                        chatMessages.innerHTML = '';
+                    }
+
+                    addChatMessage(messageText, 'sent');
+                    chatInput.value = '';
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                    // Simulate a reply
+                    setTimeout(() => {
+                        const replyText = getSimulatedReply();
+                        addChatMessage(replyText, 'received');
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }, 1000 + Math.random() * 500);
+                });
+            }
+
+            function addChatMessage(text, type) {
+                const messageElement = document.createElement('div');
+                const bubbleClasses = type === 'sent'
+                    ? 'bg-blue-600 text-white self-end'
+                    : 'bg-white text-slate-800 self-start';
+                messageElement.className = `flex w-full ${type === 'sent' ? 'justify-end' : 'justify-start'}`;
+                messageElement.innerHTML = `<div class="max-w-xs md:max-w-md p-3 rounded-2xl shadow-sm ${bubbleClasses}">${text}</div>`;
+                chatMessages.appendChild(messageElement);
+            }
+
+            function getSimulatedReply() {
+                const replies = [
+                    "Olá! Obrigado pelo contato.",
+                    "Que legal! Pode me contar mais sobre a vaga?",
+                    "Entendi. Quais são os próximos passos?",
+                    "Perfeito! Fico no aguardo.",
+                    "Obrigado!"
+                ];
+                const reply = replies[messageCounter % replies.length];
+                messageCounter++;
+                return reply;
+            }
         });
     </script>
 </body>
