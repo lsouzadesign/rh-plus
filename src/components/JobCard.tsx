@@ -27,7 +27,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, style, onMouseDown, onTouchStart
             onMouseDown={onMouseDown}
             onTouchStart={onTouchStart}
         >
-            <div className="relative h-3/5">
+            <div className="relative flex-grow">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={job.companyLogo} alt={job.companyName} className="absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>

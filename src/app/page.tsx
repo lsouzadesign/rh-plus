@@ -80,7 +80,7 @@ export default function HomePage() {
     return (
         <div className="flex flex-col h-screen">
             <main className="w-full flex-grow relative">
-                <div id="swipe-page" className={`page flex flex-col h-full ${activePage === 'swipe-page' ? '' : 'hidden'}`}>
+                <div id="swipe-page" className={`page flex flex-col h-full ${activePage === 'swipe-page' ? 'flex' : 'hidden'}`}>
                     <div className="p-4 text-center flex-shrink-0">
                         <h1 className="text-xl font-bold text-gray-800">Encontre sua Vaga</h1>
                     </div>
