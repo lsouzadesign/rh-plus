@@ -32,6 +32,20 @@ export default function HomePage() {
     const currentY = useRef(0);
     const isDragging = useRef(false);
 
+    const updateActiveCard = useCallback(() => {
+        if (deckRef.current && deckRef.current.children.length > 0) {
+            activeCardRef.current = deckRef.current.children[deckRef.current.children.length - 1] as HTMLDivElement;
+            activeCardRef.current.addEventListener('mousedown', dragStart as any);
+            activeCardRef.current.addEventListener('touchstart', dragStart as any, { passive: false });
+        } else {
+            activeCardRef.current = null;
+            const endMessage = document.getElementById('end-of-deck-message');
+            if(endMessage) endMessage.classList.remove('hidden');
+            const actionButtons = document.getElementById('action-buttons');
+            if(actionButtons) actionButtons.classList.add('hidden');
+        }
+    }, [dragStart]);
+
     const createCards = useCallback(() => {
         if (!deckRef.current) return;
         deckRef.current.innerHTML = '';
@@ -66,20 +80,6 @@ export default function HomePage() {
         updateActiveCard();
     }, [currentJobs, updateActiveCard]);
 
-    const updateActiveCard = useCallback(() => {
-        if (deckRef.current && deckRef.current.children.length > 0) {
-            activeCardRef.current = deckRef.current.children[deckRef.current.children.length - 1] as HTMLDivElement;
-            activeCardRef.current.addEventListener('mousedown', dragStart);
-            activeCardRef.current.addEventListener('touchstart', dragStart, { passive: false });
-        } else {
-            activeCardRef.current = null;
-            const endMessage = document.getElementById('end-of-deck-message');
-            if(endMessage) endMessage.classList.remove('hidden');
-            const actionButtons = document.getElementById('action-buttons');
-            if(actionButtons) actionButtons.classList.add('hidden');
-        }
-    }, [dragStart]);
-
     const dragStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
         if (!activeCardRef.current) return;
         isDragging.current = true;
@@ -100,7 +100,7 @@ export default function HomePage() {
         const rotate = diffX * 0.05;
         activeCardRef.current.style.transform = `translate(${diffX}px, ${diffY}px) rotate(${rotate}deg)`;
         updateChoiceIndicator(diffX);
-    }, [updateChoiceIndicator]);
+    }, []);
 
     const dragEnd = useCallback(() => {
         if (!isDragging.current || !activeCardRef.current) return;
@@ -155,7 +155,7 @@ export default function HomePage() {
                 updateActiveCard();
             }
         }, 500);
-    }, [updateActiveCard]);
+    }, [dragStart, updateActiveCard]);
 
     useEffect(() => {
         if(deckRef.current) {
