@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 type Job = {
@@ -145,7 +145,9 @@ export default function HomePage() {
 
         if (direction === 1 && Math.random() > 0.5) {
             const job = jobData.find(j => j.id.toString() === jobId);
-            setTimeout(() => setMatchedJob(job), 300);
+            if (job) {
+                setTimeout(() => setMatchedJob(job), 300);
+            }
         }
 
         setTimeout(() => {
