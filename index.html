@@ -276,29 +276,35 @@
 
                 if (chatForm) {
                     chatForm.addEventListener('submit', (e) => {
-                        console.log('Chat form submitted');
-                        e.preventDefault(); // Impede o recarregamento da página
-                        console.log('Default prevented');
+                        e.preventDefault();
                         const messageText = chatInput.value.trim();
                         if (messageText === '') return;
 
-                        // Remove placeholder text on first message
                         if (chatMessages.querySelector('p')) {
                             chatMessages.innerHTML = '';
                         }
 
-                        addChatMessage(messageText, 'sent');
+                        addChatMessage(messageText, 'sent', chatMessages);
                         chatInput.value = '';
                         chatMessages.scrollTop = chatMessages.scrollHeight;
 
-                        // Simulate a reply
                         setTimeout(() => {
                             const replyText = getSimulatedReply();
-                            addChatMessage(replyText, 'received');
+                            addChatMessage(replyText, 'received', chatMessages);
                             chatMessages.scrollTop = chatMessages.scrollHeight;
                         }, 1000 + Math.random() * 500);
                     });
                 }
+            }
+
+            function addChatMessage(text, type, container) {
+                const messageElement = document.createElement('div');
+                const bubbleClasses = type === 'sent'
+                    ? 'bg-blue-600 text-white self-end'
+                    : 'bg-white text-slate-800 self-start';
+                messageElement.className = `flex w-full ${type === 'sent' ? 'justify-end' : 'justify-start'}`;
+                messageElement.innerHTML = `<div class="max-w-xs md:max-w-md p-3 rounded-2xl shadow-sm ${bubbleClasses}">${text}</div>`;
+                container.appendChild(messageElement);
             }
 
             function switchView(viewName) {
@@ -455,16 +461,7 @@
                 matchOverlay.classList.remove('flex');
             });
 
-            function addChatMessage(text, type) {
-                const messageElement = document.createElement('div');
-                const bubbleClasses = type === 'sent'
-                    ? 'bg-blue-600 text-white self-end'
-                    : 'bg-white text-slate-800 self-start';
-                messageElement.className = `flex w-full ${type === 'sent' ? 'justify-end' : 'justify-start'}`;
-                messageElement.innerHTML = `<div class="max-w-xs md:max-w-md p-3 rounded-2xl shadow-sm ${bubbleClasses}">${text}</div>`;
-                chatMessages.appendChild(messageElement);
-            }
-
+            let messageCounter = 0;
             function getSimulatedReply() {
                 const replies = [
                     "Olá! Obrigado pelo contato.",
