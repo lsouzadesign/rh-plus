@@ -197,23 +197,85 @@
                             <button class="swipe-action-btn bg-white rounded-full w-20 h-20 flex items-center justify-center shadow-lg" data-action="like"><i data-lucide="check" class="w-10 h-10 text-green-500"></i></button>
                         </div>
                     </div>
+                    <div id="chat-view" class="view hidden h-full flex-col bg-slate-50">
+                        <div class="p-4 border-b bg-white flex-shrink-0">
+                            <h1 class="text-xl font-bold text-center text-slate-800">Chat</h1>
+                        </div>
+                        <div class="flex-1 overflow-y-auto p-4 space-y-4">
+                            <p class="text-center text-slate-500 pt-8">Ainda não há conversas. Continue buscando para fazer conexões!</p>
+                        </div>
+                    </div>
+                    <div id="profile-view" class="view hidden h-full flex-col">
+                        <div class="p-4 border-b bg-white flex-shrink-0">
+                           <h1 class="text-xl font-bold text-center text-slate-800">Meu Perfil</h1>
+                        </div>
+                       <div class="flex-1 overflow-y-auto p-6">
+                            <div class="text-center">
+                                <img src="${currentUser.photo}" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-blue-200">
+                                <h2 class="text-2xl font-bold">${currentUser.name}</h2>
+                                <p class="text-slate-600">${userType === 'candidate' ? 'Candidato' : 'Empresa'}</p>
+                            </div>
+                            <div class="mt-8">
+                               <button class="w-full text-left p-4 bg-white rounded-lg shadow-sm mb-2">Editar Perfil</button>
+                               <button class="w-full text-left p-4 bg-white rounded-lg shadow-sm mb-2">Configurações</button>
+                               <button class="w-full text-left p-4 bg-white rounded-lg shadow-sm text-red-500">Sair</button>
+                            </div>
+                        </div>
+                    </div>
                 `;
                 bottomNav.innerHTML = `
-                    <button class="nav-link text-blue-600 py-3 flex flex-col items-center gap-1"><i data-lucide="layout-grid"></i><span class="text-xs font-medium">Buscar</span></button>
-                    <button class="nav-link text-slate-500 py-3 flex flex-col items-center gap-1"><i data-lucide="handshake"></i><span class="text-xs font-medium">Conexões</span></button>
-                    <button class="nav-link text-slate-500 py-3 flex flex-col items-center gap-1"><i data-lucide="message-square"></i><span class="text-xs font-medium">Chat</span></button>
-                    <button class="nav-link text-slate-500 py-3 flex flex-col items-center gap-1"><i data-lucide="user"></i><span class="text-xs font-medium">Perfil</span></button>
+                    <button class="nav-link text-blue-600 py-3 flex flex-col items-center gap-1" data-view="swipe-view"><i data-lucide="layout-grid"></i><span class="text-xs font-medium">Buscar</span></button>
+                    <button class="nav-link text-slate-500 py-3 flex flex-col items-center gap-1" data-view="connections-view"><i data-lucide="handshake"></i><span class="text-xs font-medium">Conexões</span></button>
+                    <button class="nav-link text-slate-500 py-3 flex flex-col items-center gap-1" data-view="chat-view"><i data-lucide="message-square"></i><span class="text-xs font-medium">Chat</span></button>
+                    <button class="nav-link text-slate-500 py-3 flex flex-col items-center gap-1" data-view="profile-view"><i data-lucide="user"></i><span class="text-xs font-medium">Perfil</span></button>
                 `;
                 lucide.createIcons();
                 document.querySelectorAll('.swipe-action-btn').forEach(button => {
                     button.addEventListener('click', (e) => handleSwipeAction(e.currentTarget.dataset.action));
                 });
+
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        const viewName = e.currentTarget.dataset.view;
+                        switchMainView(viewName);
+
+                        // Atualiza o estado visual dos links de navegação
+                        document.querySelectorAll('.nav-link').forEach(nav => {
+                            nav.classList.remove('text-blue-600');
+                            nav.classList.add('text-slate-500');
+                        });
+                        e.currentTarget.classList.remove('text-slate-500');
+                        e.currentTarget.classList.add('text-blue-600');
+                    });
+                });
+
                 loadCards();
             }
 
-            function switchView(viewName) {
-                Object.values(views).forEach(v => v.classList.remove('active'));
-                views[viewName].classList.add('active');
+            function switchView(pageId) {
+                // Esconde todas as "páginas" principais
+                document.getElementById('welcome-page').classList.remove('active');
+                document.getElementById('login-page').classList.remove('active');
+                document.getElementById('app').classList.remove('active');
+
+                // Mostra a página solicitada
+                const pageToShow = document.getElementById(pageId);
+                if (pageToShow) {
+                    pageToShow.classList.add('active');
+                }
+            }
+
+            function switchMainView(viewName) {
+                // Esconde todas as views dentro do #main-content
+                document.querySelectorAll('#main-content .view').forEach(view => {
+                    view.classList.remove('active');
+                });
+
+                // Mostra a view solicitada
+                const viewToShow = document.getElementById(viewName);
+                if (viewToShow) {
+                    viewToShow.classList.add('active');
+                }
             }
 
             // --- CARD SWIPE LOGIC ---
