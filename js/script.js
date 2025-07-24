@@ -122,8 +122,11 @@ document.addEventListener('DOMContentLoaded', function() {
             link.addEventListener('click', (e) => {
                 const viewName = e.currentTarget.dataset.view;
                 if (viewName) {
-                    document.querySelectorAll('.main-content .view').forEach(v => v.classList.remove('active'));
-                    document.getElementById(viewName).classList.add('active');
+                    document.querySelectorAll('#main-content > .view').forEach(v => v.classList.remove('active'));
+                    const activeView = document.getElementById(viewName);
+                    if(activeView) {
+                        activeView.classList.add('active');
+                    }
                     document.querySelectorAll('.nav-link').forEach(l => {
                         l.classList.add('text-slate-500');
                         l.classList.remove('text-blue-600');
@@ -211,20 +214,17 @@ document.addEventListener('DOMContentLoaded', function() {
                             <p class="text-slate-600">${profileData.title}</p>
                         </div>
                     </div>
-                    <div>
-                        <h3 class="font-semibold text-lg mb-2">Sobre</h3>
-                        <p class="text-slate-600 mb-4">${profileData.bio}</p>
-                        <h3 class="font-semibold text-lg mb-2">Experiência</h3>
-                        <ul class="list-disc list-inside text-slate-600 space-y-1 mb-4">
-                            ${profileData.experiences.map(exp => `<li><strong>${exp.role}</strong> na ${exp.company} (${exp.period})</li>`).join('')}
-                        </ul>
-                        <h3 class="font-semibold text-lg mb-2">Formação</h3>
-                        <p class="text-slate-600 mb-4">${profileData.education}</p>
-                        <h3 class="font-semibold text-lg mb-2">Competências</h3>
-                        <div class="flex flex-wrap gap-2">
-                            ${profileData.skills.map(s => `<span class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">${s}</span>`).join('')}
+                    <form>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-slate-700">Sobre</label>
+                            <textarea class="w-full mt-1 px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg focus:ring-blue-500 focus:border-blue-500">${profileData.bio}</textarea>
                         </div>
-                    </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-slate-700">Competências</label>
+                            <input type="text" value="${profileData.skills.join(', ')}" class="w-full mt-1 px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <button type="submit" class="w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">Salvar Alterações</button>
+                    </form>
                 </div>
             `;
         } else {
@@ -237,18 +237,17 @@ document.addEventListener('DOMContentLoaded', function() {
                             <p class="text-slate-600">${profileData.sector}</p>
                         </div>
                     </div>
-                    <div>
-                        <h3 class="font-semibold text-lg mb-2">Sobre a Empresa</h3>
-                        <p class="text-slate-600 mb-4">${profileData.about}</p>
-                        <h3 class="font-semibold text-lg mb-2">Vagas em Aberto</h3>
-                        <ul class="list-disc list-inside text-slate-600 space-y-1 mb-4">
-                            ${profileData.openings.map(v => `<li>${v}</li>`).join('')}
-                        </ul>
-                        <h3 class="font-semibold text-lg mb-2">Nossa Cultura</h3>
-                        <div class="flex flex-wrap gap-2">
-                            ${profileData.culture.map(c => `<span class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">${c}</span>`).join('')}
+                    <form>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-slate-700">Sobre a Empresa</label>
+                            <textarea class="w-full mt-1 px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg focus:ring-blue-500 focus:border-blue-500">${profileData.about}</textarea>
                         </div>
-                    </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-slate-700">Vagas em Aberto</label>
+                            <input type="text" value="${profileData.openings.join(', ')}" class="w-full mt-1 px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <button type="submit" class="w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">Salvar Alterações</button>
+                    </form>
                 </div>
             `;
         }
