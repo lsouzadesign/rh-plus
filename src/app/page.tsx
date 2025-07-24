@@ -32,14 +32,14 @@ export default function HomePage() {
     const currentY = useRef(0);
     const isDragging = useRef(false);
 
-    const createCards = () => {
+    const createCards = useCallback(() => {
         if (!deckRef.current) return;
         deckRef.current.innerHTML = '';
         currentJobs.forEach((job, index) => {
             const card = document.createElement('div');
             card.className = 'swipe-card';
-            card.dataset.jobId = job.id;
-            card.style.zIndex = currentJobs.length - index;
+            card.dataset.jobId = job.id.toString();
+            card.style.zIndex = (currentJobs.length - index).toString();
             card.style.transform = `scale(${1 - (index * 0.03)}) translateY(${index * -12}px)`;
             card.innerHTML = `
                 <div class="relative h-3/5">
@@ -62,11 +62,11 @@ export default function HomePage() {
             deckRef.current.prepend(card);
         });
         updateActiveCard();
-    };
+    }, [currentJobs, updateActiveCard]);
 
-    const updateActiveCard = () => {
+    const updateActiveCard = useCallback(() => {
         if (deckRef.current && deckRef.current.children.length > 0) {
-            activeCardRef.current = deckRef.current.children[deckRef.current.children.length - 1];
+            activeCardRef.current = deckRef.current.children[deckRef.current.children.length - 1] as HTMLDivElement;
             activeCardRef.current.addEventListener('mousedown', dragStart);
             activeCardRef.current.addEventListener('touchstart', dragStart, { passive: false });
         } else {
@@ -76,9 +76,9 @@ export default function HomePage() {
             const actionButtons = document.getElementById('action-buttons');
             if(actionButtons) actionButtons.classList.add('hidden');
         }
-    };
+    }, [dragStart]);
 
-    const dragStart = (e: React.MouseEvent | React.TouchEvent) => {
+    const dragStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
         if (!activeCardRef.current) return;
         isDragging.current = true;
         activeCardRef.current.classList.add('dragging');
@@ -86,7 +86,7 @@ export default function HomePage() {
         startY.current = 'pageY' in e ? e.pageY : e.touches[0].pageY;
         currentX.current = startX.current;
         currentY.current = startY.current;
-    };
+    }, []);
 
     const dragging = (e: MouseEvent | TouchEvent) => {
         if (!isDragging.current || !activeCardRef.current) return;
@@ -100,7 +100,7 @@ export default function HomePage() {
         updateChoiceIndicator(diffX);
     };
 
-    const dragEnd = () => {
+    const dragEnd = useCallback(() => {
         if (!isDragging.current || !activeCardRef.current) return;
         isDragging.current = false;
         activeCardRef.current.classList.remove('dragging');
@@ -112,7 +112,7 @@ export default function HomePage() {
             activeCardRef.current.style.transform = '';
             updateChoiceIndicator(0);
         }
-    };
+    }, [swipeCard]);
 
     const updateChoiceIndicator = (diffX: number) => {
         if (!activeCardRef.current) return;
@@ -131,7 +131,7 @@ export default function HomePage() {
         }
     };
 
-    const swipeCard = (direction: number) => {
+    const swipeCard = useCallback((direction: number) => {
         if (!activeCardRef.current) return;
         const jobId = activeCardRef.current.dataset.jobId;
         activeCardRef.current.removeEventListener('mousedown', dragStart);
@@ -142,7 +142,7 @@ export default function HomePage() {
         activeCardRef.current.style.opacity = '0';
 
         if (direction === 1 && Math.random() > 0.5) {
-            const job = jobData.find(j => j.id == jobId);
+            const job = jobData.find(j => j.id.toString() === jobId);
             setTimeout(() => setMatchedJob(job), 300);
         }
 
@@ -153,29 +153,25 @@ export default function HomePage() {
                 updateActiveCard();
             }
         }, 500);
-    };
-
-    const memoizedCreateCards = useCallback(createCards, [currentJobs]);
-    const memoizedDragging = useCallback(dragging, []);
-    const memoizedDragEnd = useCallback(dragEnd, []);
+    }, [updateActiveCard]);
 
     useEffect(() => {
         if(deckRef.current) {
-            memoizedCreateCards();
+            createCards();
         }
 
-        document.addEventListener('mousemove', memoizedDragging);
-        document.addEventListener('touchmove', memoizedDragging, { passive: false });
-        document.addEventListener('mouseup', memoizedDragEnd);
-        document.addEventListener('touchend', memoizedDragEnd);
+        document.addEventListener('mousemove', dragging);
+        document.addEventListener('touchmove', dragging, { passive: false });
+        document.addEventListener('mouseup', dragEnd);
+        document.addEventListener('touchend', dragEnd);
 
         return () => {
-            document.removeEventListener('mousemove', memoizedDragging);
-            document.removeEventListener('touchmove', memoizedDragging);
-            document.removeEventListener('mouseup', memoizedDragEnd);
-            document.removeEventListener('touchend', memoizedDragEnd);
+            document.removeEventListener('mousemove', dragging);
+            document.removeEventListener('touchmove', dragging);
+            document.removeEventListener('mouseup', dragEnd);
+            document.removeEventListener('touchend', dragEnd);
         };
-    }, [currentJobs, memoizedCreateCards, memoizedDragging, memoizedDragEnd]);
+    }, [currentJobs, createCards, dragging, dragEnd]);
 
 
     return (
