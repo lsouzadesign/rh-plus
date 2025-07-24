@@ -20,7 +20,7 @@ type JobCardProps = {
 const JobCard: React.FC<JobCardProps> = ({ job, style }) => {
   return (
     <div
-      className="absolute top-0 left-0 w-full h-full bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col"
+      className="swipe-card absolute w-[90%] h-[85%] rounded-2xl overflow-hidden shadow-lg flex flex-col"
       style={style}
     >
       <div className="relative h-3/5">
