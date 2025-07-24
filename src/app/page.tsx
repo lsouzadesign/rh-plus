@@ -1,9 +1,18 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 
-const jobData = [
+type Job = {
+    id: number;
+    companyLogo: string;
+    jobTitle: string;
+    companyName: string;
+    skills: string[];
+    description: string;
+};
+
+const jobData: Job[] = [
     { id: 1, companyLogo: '/nuvemco.png', jobTitle: 'Engenheiro de Software Sênior', companyName: 'NuvemCo Solutions', skills: ['Go', 'Kubernetes', 'AWS', 'Microserviços'], description: 'Lidere o desenvolvimento de nossa plataforma de nuvem de última geração.' },
     { id: 2, companyLogo: '/inovatech.png', jobTitle: 'Designer de Produto (UI/UX)', companyName: 'InovaTech Labs', skills: ['Figma', 'User Research', 'Prototipagem'], description: 'Crie experiências de usuário incríveis e intuitivas para nossos apps.' },
     { id: 3, companyLogo: '/datamind.png', jobTitle: 'Cientista de Dados Pleno', companyName: 'DataMind AI', skills: ['Python', 'TensorFlow', 'SQL'], description: 'Desenvolva modelos preditivos e análises complexas.' },
@@ -11,12 +20,12 @@ const jobData = [
 ];
 
 export default function HomePage() {
-    const [currentJobs, setCurrentJobs] = useState(jobData);
+    const [currentJobs, setCurrentJobs] = useState<Job[]>(jobData);
     const [activePage, setActivePage] = useState('swipe-page');
-    const [matchedJob, setMatchedJob] = useState<any>(null);
+    const [matchedJob, setMatchedJob] = useState<Job | null>(null);
 
     const deckRef = useRef<HTMLDivElement>(null);
-    const activeCardRef = useRef<any>(null);
+    const activeCardRef = useRef<HTMLDivElement | null>(null);
     const startX = useRef(0);
     const startY = useRef(0);
     const currentX = useRef(0);
@@ -69,21 +78,21 @@ export default function HomePage() {
         }
     };
 
-    const dragStart = (e: any) => {
+    const dragStart = (e: React.MouseEvent | React.TouchEvent) => {
         if (!activeCardRef.current) return;
         isDragging.current = true;
         activeCardRef.current.classList.add('dragging');
-        startX.current = e.pageX || e.touches[0].pageX;
-        startY.current = e.pageY || e.touches[0].pageY;
+        startX.current = 'pageX' in e ? e.pageX : e.touches[0].pageX;
+        startY.current = 'pageY' in e ? e.pageY : e.touches[0].pageY;
         currentX.current = startX.current;
         currentY.current = startY.current;
     };
 
-    const dragging = (e: any) => {
+    const dragging = (e: MouseEvent | TouchEvent) => {
         if (!isDragging.current || !activeCardRef.current) return;
         e.preventDefault();
-        currentX.current = e.pageX || e.touches[0].pageX;
-        currentY.current = e.pageY || e.touches[0].pageY;
+        currentX.current = 'pageX' in e ? e.pageX : e.touches[0].pageX;
+        currentY.current = 'pageY' in e ? e.pageY : e.touches[0].pageY;
         const diffX = currentX.current - startX.current;
         const diffY = currentY.current - startY.current;
         const rotate = diffX * 0.05;
@@ -105,24 +114,24 @@ export default function HomePage() {
         }
     };
 
-    const updateChoiceIndicator = (diffX: any) => {
+    const updateChoiceIndicator = (diffX: number) => {
         if (!activeCardRef.current) return;
-        const likeIndicator = activeCardRef.current.querySelector('.like');
-        const nopeIndicator = activeCardRef.current.querySelector('.nope');
+        const likeIndicator = activeCardRef.current.querySelector('.like') as HTMLDivElement;
+        const nopeIndicator = activeCardRef.current.querySelector('.nope') as HTMLDivElement;
         const opacity = Math.min(Math.abs(diffX) / 100, 1);
         if (diffX > 0) {
-            likeIndicator.style.opacity = opacity;
-            nopeIndicator.style.opacity = 0;
+            likeIndicator.style.opacity = opacity.toString();
+            nopeIndicator.style.opacity = '0';
         } else if (diffX < 0) {
-            nopeIndicator.style.opacity = opacity;
-            likeIndicator.style.opacity = 0;
+            nopeIndicator.style.opacity = opacity.toString();
+            likeIndicator.style.opacity = '0';
         } else {
-            likeIndicator.style.opacity = 0;
-            nopeIndicator.style.opacity = 0;
+            likeIndicator.style.opacity = '0';
+            nopeIndicator.style.opacity = '0';
         }
     };
 
-    const swipeCard = (direction: any) => {
+    const swipeCard = (direction: number) => {
         if (!activeCardRef.current) return;
         const jobId = activeCardRef.current.dataset.jobId;
         activeCardRef.current.removeEventListener('mousedown', dragStart);
@@ -146,23 +155,27 @@ export default function HomePage() {
         }, 500);
     };
 
+    const memoizedCreateCards = useCallback(createCards, [currentJobs]);
+    const memoizedDragging = useCallback(dragging, []);
+    const memoizedDragEnd = useCallback(dragEnd, []);
+
     useEffect(() => {
         if(deckRef.current) {
-            createCards();
+            memoizedCreateCards();
         }
 
-        document.addEventListener('mousemove', dragging);
-        document.addEventListener('touchmove', dragging, { passive: false });
-        document.addEventListener('mouseup', dragEnd);
-        document.addEventListener('touchend', dragEnd);
+        document.addEventListener('mousemove', memoizedDragging);
+        document.addEventListener('touchmove', memoizedDragging, { passive: false });
+        document.addEventListener('mouseup', memoizedDragEnd);
+        document.addEventListener('touchend', memoizedDragEnd);
 
         return () => {
-            document.removeEventListener('mousemove', dragging);
-            document.removeEventListener('touchmove', dragging);
-            document.removeEventListener('mouseup', dragEnd);
-            document.removeEventListener('touchend', dragEnd);
+            document.removeEventListener('mousemove', memoizedDragging);
+            document.removeEventListener('touchmove', memoizedDragging);
+            document.removeEventListener('mouseup', memoizedDragEnd);
+            document.removeEventListener('touchend', memoizedDragEnd);
         };
-    }, [currentJobs]);
+    }, [currentJobs, memoizedCreateCards, memoizedDragging, memoizedDragEnd]);
 
 
     return (
