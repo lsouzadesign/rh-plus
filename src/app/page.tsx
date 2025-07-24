@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import JobCard from '../components/JobCard';
 
 type Job = {
     id: number;
@@ -20,164 +21,61 @@ const jobData: Job[] = [
 ];
 
 export default function HomePage() {
-    const [currentJobs, setCurrentJobs] = useState<Job[]>(jobData);
+    const [jobs, setJobs] = useState(jobData);
     const [activePage, setActivePage] = useState('swipe-page');
     const [matchedJob, setMatchedJob] = useState<Job | null>(null);
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [style, setStyle] = useState({
+        transform: 'translateX(0) rotate(0deg)',
+        opacity: 1,
+        transition: 'none'
+    });
 
-    const deckRef = useRef<HTMLDivElement>(null);
-    const activeCardRef = useRef<HTMLDivElement | null>(null);
-    const startX = useRef(0);
-    const startY = useRef(0);
-    const currentX = useRef(0);
-    const currentY = useRef(0);
     const isDragging = useRef(false);
+    const startX = useRef(0);
 
-    const updateActiveCard = () => {
-        if (deckRef.current && deckRef.current.children.length > 0) {
-            activeCardRef.current = deckRef.current.children[deckRef.current.children.length - 1] as HTMLDivElement;
-            activeCardRef.current.addEventListener('mousedown', dragStart as EventListener);
-            activeCardRef.current.addEventListener('touchstart', dragStart as EventListener, { passive: false });
-        } else {
-            activeCardRef.current = null;
-            const endMessage = document.getElementById('end-of-deck-message');
-            if(endMessage) endMessage.classList.remove('hidden');
-            const actionButtons = document.getElementById('action-buttons');
-            if(actionButtons) actionButtons.classList.add('hidden');
-        }
-    };
-
-    const createCards = () => {
-        if (!deckRef.current) return;
-        deckRef.current.innerHTML = '';
-        currentJobs.forEach((job, index) => {
-            const card = document.createElement('div');
-            card.className = 'swipe-card';
-            card.dataset.jobId = job.id.toString();
-            card.style.zIndex = (currentJobs.length - index).toString();
-            card.style.transform = `scale(${1 - (index * 0.03)}) translateY(${index * -12}px)`;
-            card.innerHTML = `
-                <div class="relative h-3/5">
-                    <img src="${job.companyLogo}" class="absolute inset-0 w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-6">
-                        <h2 class="text-2xl font-bold text-white">${job.jobTitle}</h2>
-                        <p class="text-md text-gray-200">${job.companyName}</p>
-                    </div>
-                    <div class="choice-indicator like">INTERESSE</div>
-                    <div class="choice-indicator nope">PASSAR</div>
-                </div>
-                <div class="p-6 flex-grow flex flex-col">
-                    <div class="mb-4">
-                        <h3 class="font-semibold text-gray-700 mb-2">Competências:</h3>
-                        <div class="flex flex-wrap gap-2">${job.skills.map(skill => `<span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full">${skill}</span>`).join('')}</div>
-                    </div>
-                    <p class="text-gray-600 text-sm flex-grow">${job.description}</p>
-                </div>`;
-            if (deckRef.current) {
-                deckRef.current.prepend(card);
-            }
-        });
-        updateActiveCard();
-    };
-
-    const dragStart = (e: MouseEvent | TouchEvent) => {
-        if (!activeCardRef.current) return;
+    const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
         isDragging.current = true;
-        activeCardRef.current.classList.add('dragging');
         startX.current = 'pageX' in e ? e.pageX : e.touches[0].pageX;
-        startY.current = 'pageY' in e ? e.pageY : e.touches[0].pageY;
-        currentX.current = startX.current;
-        currentY.current = startY.current;
+        setStyle({ ...style, transition: 'none' });
     };
 
-    const dragging = (e: MouseEvent | TouchEvent) => {
-        if (!isDragging.current || !activeCardRef.current) return;
-        e.preventDefault();
-        currentX.current = 'pageX' in e ? e.pageX : e.touches[0].pageX;
-        currentY.current = 'pageY' in e ? e.pageY : e.touches[0].pageY;
-        const diffX = currentX.current - startX.current;
-        const diffY = currentY.current - startY.current;
+    const handleDragMove = (e: React.MouseEvent | React.TouchEvent) => {
+        if (!isDragging.current) return;
+        const currentX = 'pageX' in e ? e.pageX : e.touches[0].pageX;
+        const diffX = currentX - startX.current;
         const rotate = diffX * 0.05;
-        activeCardRef.current.style.transform = `translate(${diffX}px, ${diffY}px) rotate(${rotate}deg)`;
-        updateChoiceIndicator(diffX);
+        setStyle({ ...style, transform: `translateX(${diffX}px) rotate(${rotate}deg)` });
     };
 
-    const dragEnd = () => {
-        if (!isDragging.current || !activeCardRef.current) return;
+    const handleDragEnd = () => {
+        if (!isDragging.current) return;
         isDragging.current = false;
-        activeCardRef.current.classList.remove('dragging');
-        const diffX = currentX.current - startX.current;
+        const transform = style.transform;
+        const x = parseInt(transform.split('(')[1].split('px')[0]);
         const decisionThreshold = 100;
-        if (Math.abs(diffX) > decisionThreshold) {
-            swipeCard(diffX > 0 ? 1 : -1);
+
+        if (Math.abs(x) > decisionThreshold) {
+            swipe(x > 0 ? 1 : -1);
         } else {
-            activeCardRef.current.style.transform = '';
-            updateChoiceIndicator(0);
+            setStyle({ ...style, transform: 'translateX(0) rotate(0deg)', transition: 'transform 0.3s ease' });
         }
     };
 
-    const updateChoiceIndicator = (diffX: number) => {
-        if (!activeCardRef.current) return;
-        const likeIndicator = activeCardRef.current.querySelector('.like') as HTMLDivElement;
-        const nopeIndicator = activeCardRef.current.querySelector('.nope') as HTMLDivElement;
-        const opacity = Math.min(Math.abs(diffX) / 100, 1);
-        if (diffX > 0) {
-            likeIndicator.style.opacity = opacity.toString();
-            nopeIndicator.style.opacity = '0';
-        } else if (diffX < 0) {
-            nopeIndicator.style.opacity = opacity.toString();
-            likeIndicator.style.opacity = '0';
-        } else {
-            likeIndicator.style.opacity = '0';
-            nopeIndicator.style.opacity = '0';
-        }
-    };
-
-    const swipeCard = (direction: number) => {
-        if (!activeCardRef.current) return;
-        const jobId = activeCardRef.current.dataset.jobId;
-        activeCardRef.current.removeEventListener('mousedown', dragStart as EventListener);
-        activeCardRef.current.removeEventListener('touchstart', dragStart as EventListener);
+    const swipe = (direction: number) => {
         const endX = direction * window.innerWidth;
-        activeCardRef.current.style.transition = 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out';
-        activeCardRef.current.style.transform = `translate(${endX}px, -50px) rotate(${direction * 30}deg)`;
-        activeCardRef.current.style.opacity = '0';
+        const rotate = direction * 30;
+        setStyle({ transform: `translateX(${endX}px) rotate(${rotate}deg)`, opacity: 0, transition: 'all 0.5s ease-in-out' });
 
         if (direction === 1 && Math.random() > 0.5) {
-            const job = jobData.find(j => j.id.toString() === jobId);
-            if (job) {
-                setTimeout(() => setMatchedJob(job), 300);
-            }
+            setMatchedJob(jobs[activeIndex]);
         }
 
         setTimeout(() => {
-            if (deckRef.current && activeCardRef.current) {
-                deckRef.current.removeChild(activeCardRef.current);
-                setCurrentJobs(prev => prev.slice(1));
-                updateActiveCard();
-            }
+            setJobs(jobs.slice(1));
+            setStyle({ transform: 'translateX(0) rotate(0deg)', opacity: 1, transition: 'none' });
         }, 500);
     };
-
-    useEffect(() => {
-        if(deckRef.current) {
-            createCards();
-        }
-
-        document.addEventListener('mousemove', dragging);
-        document.addEventListener('touchmove', dragging, { passive: false });
-        document.addEventListener('mouseup', dragEnd);
-        document.addEventListener('touchend', dragEnd);
-
-        return () => {
-            document.removeEventListener('mousemove', dragging);
-            document.removeEventListener('touchmove', dragging);
-            document.removeEventListener('mouseup', dragEnd);
-            document.removeEventListener('touchend', dragEnd);
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentJobs]);
-
 
     return (
         <div className="flex flex-col h-screen">
@@ -186,13 +84,50 @@ export default function HomePage() {
                     <div className="p-4 text-center flex-shrink-0">
                         <h1 className="text-xl font-bold text-gray-800">Encontre sua Vaga</h1>
                     </div>
-                    <div id="swipe-deck" ref={deckRef} className="relative flex-grow flex items-center justify-center p-4">
+                    <div
+                        id="swipe-deck"
+                        className="relative flex-grow flex items-center justify-center p-4"
+                        onMouseMove={handleDragMove}
+                        onTouchMove={handleDragMove}
+                        onMouseUp={handleDragEnd}
+                        onTouchEnd={handleDragEnd}
+                        onMouseLeave={handleDragEnd}
+                    >
+                        {jobs.map((job, index) => {
+                            if (index === 0) {
+                                return (
+                                    <JobCard
+                                        key={job.id}
+                                        job={job}
+                                        style={style}
+                                        onMouseDown={handleDragStart}
+                                        onTouchStart={handleDragStart}
+                                        className="dragging"
+                                    />
+                                );
+                            }
+                            return (
+                                <JobCard
+                                    key={job.id}
+                                    job={job}
+                                    style={{
+                                        transform: `scale(${1 - (index * 0.03)}) translateY(${index * -12}px)`,
+                                        zIndex: jobs.length - index,
+                                        opacity: 1,
+                                        transition: 'transform 0.3s ease-out'
+                                    }}
+                                    onMouseDown={() => {}}
+                                    onTouchStart={() => {}}
+                                    className=""
+                                />
+                            );
+                        }).reverse()}
                     </div>
                     <div id="action-buttons" className="flex items-center justify-evenly p-4 flex-shrink-0">
-                        <button id="nope-btn" onClick={() => swipeCard(-1)} className="p-4 bg-white rounded-full shadow-lg hover:bg-red-50 transition-colors">
+                        <button id="nope-btn" onClick={() => swipe(-1)} className="p-4 bg-white rounded-full shadow-lg hover:bg-red-50 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                         </button>
-                        <button id="like-btn" onClick={() => swipeCard(1)} className="p-5 bg-white rounded-full shadow-lg hover:bg-green-50 transition-colors transform scale-110">
+                        <button id="like-btn" onClick={() => swipe(1)} className="p-5 bg-white rounded-full shadow-lg hover:bg-green-50 transition-colors transform scale-110">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" /></svg>
                         </button>
                     </div>
