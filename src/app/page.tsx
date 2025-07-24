@@ -5,8 +5,6 @@ import { useState } from 'react';
 import SwipePage from '../components/SwipePage';
 import ProfilePage from '../components/ProfilePage';
 import ChatPage from '../components/ChatPage';
-import Footer from '../components/Footer';
-import MatchModal from '../components/MatchModal';
 
 // Tipos de dados para segurança com TypeScript
 type Job = {
@@ -50,8 +48,6 @@ export default function HomePage() {
           handleSwipe={handleSwipe}
         />
       </main>
-      <Footer activePage={activePage} setActivePage={setActivePage} />
-      <MatchModal matchedJob={matchedJob} setMatchedJob={setMatchedJob} />
     </div>
   );
 }
