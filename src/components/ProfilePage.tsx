@@ -13,7 +13,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ activePage }) => {
     <div id="profile-page" className={`page bg-white p-6 overflow-y-auto ${activePage === 'profile-page' ? 'block' : 'hidden'}`}>
       <div className="max-w-md mx-auto">
         <div className="text-center">
-          <Image src="https://placehold.co/128x128/e0e7ff/4338ca?text=AC" width={128} height={128} className="w-32 h-32 rounded-full mx-auto ring-4 ring-indigo-300" alt="Foto do Candidato" />
+          <Image src="/avatar.jpg" width={128} height={128} className="w-32 h-32 rounded-full mx-auto ring-4 ring-indigo-300" alt="Foto do Candidato" />
           <h2 className="mt-4 text-2xl font-bold text-gray-800">Ana C.</h2>
           <p className="text-md text-gray-600">Desenvolvedora Full-Stack</p>
           <button className="mt-4 w-full py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700">Editar Perfil</button>
