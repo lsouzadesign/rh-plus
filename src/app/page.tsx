@@ -35,7 +35,7 @@ export default function HomePage() {
   const [matchedJob, setMatchedJob] = useState<Job | null>(null);
 
   // Refs para a lógica de arrastar (substitui getElementById)
-  const deckRef = useRef<HTMLDivElement>(null);
+  const deckRef = useRef<HTMLDivElement>(null!);
   const dragState = useRef<{
     isDragging: boolean;
     startX: number;
