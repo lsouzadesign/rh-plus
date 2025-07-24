@@ -32,11 +32,11 @@ export default function HomePage() {
     const currentY = useRef(0);
     const isDragging = useRef(false);
 
-    const updateActiveCard = useCallback(() => {
+    const updateActiveCard = () => {
         if (deckRef.current && deckRef.current.children.length > 0) {
             activeCardRef.current = deckRef.current.children[deckRef.current.children.length - 1] as HTMLDivElement;
-            activeCardRef.current.addEventListener('mousedown', dragStart as any);
-            activeCardRef.current.addEventListener('touchstart', dragStart as any, { passive: false });
+            activeCardRef.current.addEventListener('mousedown', dragStart as EventListener);
+            activeCardRef.current.addEventListener('touchstart', dragStart as EventListener, { passive: false });
         } else {
             activeCardRef.current = null;
             const endMessage = document.getElementById('end-of-deck-message');
@@ -44,9 +44,9 @@ export default function HomePage() {
             const actionButtons = document.getElementById('action-buttons');
             if(actionButtons) actionButtons.classList.add('hidden');
         }
-    }, [dragStart]);
+    };
 
-    const createCards = useCallback(() => {
+    const createCards = () => {
         if (!deckRef.current) return;
         deckRef.current.innerHTML = '';
         currentJobs.forEach((job, index) => {
@@ -78,9 +78,9 @@ export default function HomePage() {
             }
         });
         updateActiveCard();
-    }, [currentJobs, updateActiveCard]);
+    };
 
-    const dragStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    const dragStart = (e: MouseEvent | TouchEvent) => {
         if (!activeCardRef.current) return;
         isDragging.current = true;
         activeCardRef.current.classList.add('dragging');
@@ -88,9 +88,9 @@ export default function HomePage() {
         startY.current = 'pageY' in e ? e.pageY : e.touches[0].pageY;
         currentX.current = startX.current;
         currentY.current = startY.current;
-    }, []);
+    };
 
-    const dragging = useCallback((e: MouseEvent | TouchEvent) => {
+    const dragging = (e: MouseEvent | TouchEvent) => {
         if (!isDragging.current || !activeCardRef.current) return;
         e.preventDefault();
         currentX.current = 'pageX' in e ? e.pageX : e.touches[0].pageX;
@@ -100,9 +100,9 @@ export default function HomePage() {
         const rotate = diffX * 0.05;
         activeCardRef.current.style.transform = `translate(${diffX}px, ${diffY}px) rotate(${rotate}deg)`;
         updateChoiceIndicator(diffX);
-    }, []);
+    };
 
-    const dragEnd = useCallback(() => {
+    const dragEnd = () => {
         if (!isDragging.current || !activeCardRef.current) return;
         isDragging.current = false;
         activeCardRef.current.classList.remove('dragging');
@@ -114,9 +114,9 @@ export default function HomePage() {
             activeCardRef.current.style.transform = '';
             updateChoiceIndicator(0);
         }
-    }, [swipeCard]);
+    };
 
-    const updateChoiceIndicator = useCallback((diffX: number) => {
+    const updateChoiceIndicator = (diffX: number) => {
         if (!activeCardRef.current) return;
         const likeIndicator = activeCardRef.current.querySelector('.like') as HTMLDivElement;
         const nopeIndicator = activeCardRef.current.querySelector('.nope') as HTMLDivElement;
@@ -131,13 +131,13 @@ export default function HomePage() {
             likeIndicator.style.opacity = '0';
             nopeIndicator.style.opacity = '0';
         }
-    }, []);
+    };
 
-    const swipeCard = useCallback((direction: number) => {
+    const swipeCard = (direction: number) => {
         if (!activeCardRef.current) return;
         const jobId = activeCardRef.current.dataset.jobId;
-        activeCardRef.current.removeEventListener('mousedown', dragStart);
-        activeCardRef.current.removeEventListener('touchstart', dragStart);
+        activeCardRef.current.removeEventListener('mousedown', dragStart as EventListener);
+        activeCardRef.current.removeEventListener('touchstart', dragStart as EventListener);
         const endX = direction * window.innerWidth;
         activeCardRef.current.style.transition = 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out';
         activeCardRef.current.style.transform = `translate(${endX}px, -50px) rotate(${direction * 30}deg)`;
@@ -155,7 +155,7 @@ export default function HomePage() {
                 updateActiveCard();
             }
         }, 500);
-    }, [dragStart, updateActiveCard]);
+    };
 
     useEffect(() => {
         if(deckRef.current) {
@@ -173,7 +173,8 @@ export default function HomePage() {
             document.removeEventListener('mouseup', dragEnd);
             document.removeEventListener('touchend', dragEnd);
         };
-    }, [currentJobs, createCards, dragging, dragEnd]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentJobs]);
 
 
     return (
