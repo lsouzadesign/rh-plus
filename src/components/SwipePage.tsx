@@ -18,7 +18,7 @@ type SwipePageProps = {
   activePage: string;
   handleSwipe: (direction: 'left' | 'right') => void;
   dragState: React.MutableRefObject<{ isDragging: boolean; startX: number; currentX: number; }>;
-  deckRef: React.RefObject<HTMLDivElement> | null;
+  deckRef: React.RefObject<HTMLDivElement>;
 };
 
 const SwipePage: React.FC<SwipePageProps> = ({ jobs, activePage, handleSwipe, dragState, deckRef }) => {
