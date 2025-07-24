@@ -25,7 +25,7 @@ const SwipePage: React.FC<SwipePageProps> = ({ jobs, activePage, handleSwipe }) 
       <div className="p-4 text-center flex-shrink-0">
         <h1 className="text-2xl font-bold text-gray-800">Encontre sua Vaga</h1>
       </div>
-      <div className="relative flex-grow w-full max-w-sm mx-auto p-4">
+      <div className="relative flex-grow w-full max-w-sm mx-auto p-4 flex items-center justify-center">
         {jobs.length > 0 ? (
           jobs.map((job, index) => (
             <JobCard
