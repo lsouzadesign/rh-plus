@@ -137,7 +137,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         loadCards();
-switchMainView('swipe-view'); // Garante que a visualização inicial seja exibida
 
         const chatForm = document.getElementById('chat-form');
         const chatInput = document.getElementById('chat-input');
