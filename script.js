@@ -167,18 +167,116 @@ switchMainView('swipe-view'); // Garante que a visualização inicial seja exibi
     }
 
     // --- CARD SWIPE LOGIC ---
+    let activeCard = null, startX = 0, currentX = 0, isDragging = false;
+
+    function createCardElement(data) {
+        const isJob = 'company' in data;
+        const headerBg = isJob ? 'from-purple-600 to-indigo-600' : 'from-pink-500 to-orange-500';
+        const skillsHTML = data.skills.map(skill => `<span class="bg-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded-full">${skill}</span>`).join('');
+        const card = document.createElement('div');
+        card.className = 'card absolute w-full h-full cursor-grab active:cursor-grabbing';
+        card.dataset.id = data.id;
+        card.innerHTML = `
+            <div class="w-full h-full bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col">
+                <div class="bg-gradient-to-br ${headerBg} text-white flex-shrink-0 h-3/5 flex flex-col justify-end p-6">
+                    <p class="font-extrabold text-4xl leading-tight">${isJob ? data.company : data.name}</p>
+                    <p class="text-2xl opacity-90">${data.title}</p>
+                </div>
+                <div class="p-6 flex-grow h-2/5 overflow-y-auto">
+                    <h3 class="font-semibold mb-2">${isJob ? 'Competências da Vaga' : 'Principais Competências'}</h3>
+                    <div class="flex flex-wrap gap-2 mb-4">${skillsHTML}</div>
+                    <p class="text-slate-600 text-sm">${isJob ? data.description : data.bio}</p>
+                </div>
+            </div>`;
+        return card;
+    }
+
     function loadCards() {
         const cardStack = document.getElementById('card-stack');
         if (!cardStack) return;
         currentCardIndex = 0;
-        cardStack.innerHTML = cardsData.map(createCardElement).reverse().join('');
-
-        document.querySelectorAll('.card').forEach(card => {
-            card.addEventListener('mousedown', (e) => onDragStart(e));
-            card.addEventListener('touchstart', (e) => onDragStart(e), { passive: true });
+        cardStack.innerHTML = ''; // Limpa o stack
+        cardsData.map(createCardElement).reverse().forEach(cardElement => {
+            cardStack.appendChild(cardElement);
+            cardElement.addEventListener('mousedown', (e) => onDragStart(e));
+            cardElement.addEventListener('touchstart', (e) => onDragStart(e), { passive: true });
         });
     }
-    // ... (toda a lógica de arrastar e soltar do cartão permanece a mesma)
+
+    function onDragStart(e) {
+        if (currentCardIndex >= cardsData.length || isDragging) return;
+        activeCard = document.querySelector('.card:last-child');
+        if (!activeCard) return;
+
+        startX = e.pageX || e.touches[0].pageX;
+        isDragging = true;
+        activeCard.classList.remove('releasing');
+        document.addEventListener('mousemove', onDragMove);
+        document.addEventListener('touchmove', onDragMove, { passive: true });
+        document.addEventListener('mouseup', onDragEnd);
+        document.addEventListener('touchend', onDragEnd);
+    }
+
+    function onDragMove(e) {
+        if (!isDragging || !activeCard) return;
+        currentX = (e.pageX || e.touches[0].pageX) - startX;
+        activeCard.style.transform = `translateX(${currentX}px) rotate(${currentX * 0.1}deg)`;
+    }
+
+    function onDragEnd() {
+        if (!isDragging || !activeCard) return;
+        isDragging = false;
+        const decisionThreshold = window.innerWidth / 4;
+
+        if (Math.abs(currentX) > decisionThreshold) {
+            handleSwipeAction(currentX > 0 ? 'like' : 'reject', true);
+        } else {
+            activeCard.classList.add('releasing');
+            activeCard.style.transform = '';
+        }
+
+        document.removeEventListener('mousemove', onDragMove);
+        document.removeEventListener('touchmove', onDragMove);
+        document.removeEventListener('mouseup', onDragEnd);
+        document.removeEventListener('touchend', onDragEnd);
+        currentX = 0;
+    }
+
+    function handleSwipeAction(action, fromDrag = false) {
+        if (currentCardIndex >= cardsData.length) return;
+        const cardToRemove = document.querySelector('.card:last-child');
+        if (!cardToRemove) return;
+
+        cardToRemove.style.pointerEvents = 'none';
+        cardToRemove.classList.add('releasing');
+
+        if (fromDrag) {
+            const finalX = (action === 'like' ? 1 : -1) * (window.innerWidth / 2 + cardToRemove.clientWidth);
+            cardToRemove.style.transform = `translateX(${finalX}px) rotate(${currentX * 0.1}deg)`;
+        } else {
+            const rotation = action === 'like' ? 15 : -15;
+            cardToRemove.style.transform = `translateX(${action === 'like' ? '150%' : '-150%'}) rotate(${rotation}deg)`;
+        }
+
+        setTimeout(() => {
+            cardToRemove.remove();
+        }, 400);
+
+        const swipedItem = cardsData[currentCardIndex];
+        if (action === 'like') {
+            setTimeout(() => showMatch(currentUser, swipedItem), 400);
+        }
+
+        currentCardIndex++;
+        if (currentCardIndex >= cardsData.length) {
+            setTimeout(() => {
+                const cardStack = document.getElementById('card-stack');
+                if (cardStack) {
+                    cardStack.innerHTML = '<p class="text-center text-slate-500 p-8">Não há mais perfis por hoje. Volte amanhã!</p>';
+                }
+            }, 500);
+        }
+    }
 
     // --- MATCH LOGIC ---
     // ... (toda a lógica de correspondência permanece a mesma)
