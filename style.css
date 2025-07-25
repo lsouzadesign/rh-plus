@@ -52,8 +52,10 @@ body {
     flex-shrink: 0;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    border-top: 1px solid #e2e8f0; /* border-slate-200 */
+    border-top: 1px solid #e2e8f0;
     background-color: white;
+    position: sticky;
+    bottom: 0;
 }
 
 .nav-link {

@@ -279,7 +279,27 @@ switchMainView('swipe-view'); // Garante que a visualização inicial seja exibi
     }
 
     // --- MATCH LOGIC ---
-    // ... (toda a lógica de correspondência permanece a mesma)
+    function showMatch(user1, user2) {
+        const isJob = 'company' in user2;
+        const matchName = document.getElementById('match-name');
+        const matchImg1 = document.getElementById('match-img-1');
+        const matchImg2 = document.getElementById('match-img-2');
+
+        if (matchName) matchName.textContent = isJob ? user2.company : user2.name;
+        if (matchImg1) matchImg1.src = user1.photo;
+        if (matchImg2) matchImg2.src = isJob ? user2.logo : user2.photo;
+
+        matchOverlay.classList.remove('hidden');
+        lucide.createIcons();
+    }
+
+    document.getElementById('keep-swiping-btn').addEventListener('click', () => {
+        matchOverlay.classList.add('hidden');
+    });
+    document.getElementById('go-to-chat-btn').addEventListener('click', () => {
+        matchOverlay.classList.add('hidden');
+        switchMainView('chat-view');
+    });
 
     let messageCounter = 0;
     function getSimulatedReply() {

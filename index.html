@@ -55,8 +55,18 @@
     </div>
 
     <!-- Overlay de Match -->
-    <div id="match-overlay" class="match-overlay hidden">
-        <!-- ... (conteúdo do overlay de match) ... -->
+    <div id="match-overlay" class="match-overlay hidden fixed inset-0 z-50 flex-col items-center justify-center text-center p-8">
+        <h2 class="text-6xl font-extrabold text-white" style="text-shadow: 0 0 20px #3b82f6, 0 0 30px #2563eb;">Conexão Realizada!</h2>
+        <p class="text-blue-200 mt-2 mb-8">Você e <span id="match-name" class="font-bold"></span> agora estão conectados.</p>
+        <div class="flex items-center gap-4">
+            <img id="match-img-1" src="" class="w-24 h-24 rounded-full border-4 border-white shadow-lg">
+            <i data-lucide="handshake" class="w-10 h-10 text-blue-300"></i>
+            <img id="match-img-2" src="" class="w-24 h-24 rounded-full border-4 border-white shadow-lg">
+        </div>
+        <div class="mt-10 w-full max-w-xs space-y-4">
+            <button id="go-to-chat-btn" class="w-full py-3 bg-blue-600 text-white font-semibold rounded-xl">Iniciar Conversa</button>
+            <button id="keep-swiping-btn" class="w-full py-3 bg-transparent border-2 border-white/50 text-white/80 font-semibold rounded-xl">Continuar Buscando</button>
+        </div>
     </div>
 
     <script src="script.js"></script>
