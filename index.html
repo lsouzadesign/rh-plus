@@ -6,476 +6,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RH+ MVP</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            overscroll-behavior: none;
-        }
-
-        .view {
-            display: none;
-        }
-
-        .view.active {
-            display: flex;
-        }
-
-        .main-content::-webkit-scrollbar {
-            display: none;
-        }
-
-        .main-content {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        .card {
-            touch-action: none;
-            transition: transform 0.1s linear;
-        }
-
-        .card.releasing {
-            transition: transform 0.4s ease-out;
-        }
-
-        .match-overlay {
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-    </style>
 </head>
 
-<body class="bg-slate-100 h-screen w-screen overflow-hidden">
+<body>
 
-    <!-- Tela de Boas-vindas -->
-    <div id="welcome-page" class="view active w-full h-full flex-col items-center justify-center text-center p-8">
-        <h1 class="text-6xl font-extrabold text-blue-600 mb-4">RH+</h1>
-        <p class="text-slate-600 text-lg mb-12">A conexão certa para sua equipe e carreira.</p>
-        <div class="w-full max-w-xs space-y-4">
-            <button
-                class="welcome-btn w-full py-4 bg-blue-600 text-white font-semibold rounded-xl shadow-lg hover:bg-blue-700 transition-transform hover:scale-105"
-                data-usertype="company">Sou uma empresa</button>
-            <button
-                class="welcome-btn w-full py-4 bg-slate-700 text-white font-semibold rounded-xl shadow-lg hover:bg-slate-800 transition-transform hover:scale-105"
-                data-usertype="candidate">Procuro vagas</button>
+    <!-- Telas Iniciais (Welcome, Login) -->
+    <div id="initial-screens">
+        <div id="welcome-page" class="view active w-full h-full flex-col items-center justify-center text-center p-8">
+            <h1 class="text-6xl font-extrabold text-blue-600 mb-4">RH+</h1>
+            <p class="text-slate-600 text-lg mb-12">A conexão certa para sua equipe e carreira.</p>
+            <div class="w-full max-w-xs space-y-4">
+                <button class="welcome-btn w-full py-4 bg-blue-600 text-white font-semibold rounded-xl shadow-lg hover:bg-blue-700" data-usertype="company">Sou uma empresa</button>
+                <button class="welcome-btn w-full py-4 bg-slate-700 text-white font-semibold rounded-xl shadow-lg hover:bg-slate-800" data-usertype="candidate">Procuro vagas</button>
+            </div>
         </div>
-    </div>
-
-    <!-- Tela de Login -->
-    <div id="login-page" class="view w-full h-full flex-col items-center justify-center bg-slate-100 p-4">
-        <div class="w-full max-w-sm">
-            <div class="bg-white p-8 rounded-2xl shadow-lg text-center">
-                <h1 class="text-3xl font-bold text-blue-600 mb-2">Login</h1>
-                <p id="login-subtitle" class="text-slate-600 mb-8"></p>
-                <form id="login-form" class="space-y-4">
-                    <input type="email" placeholder="Email"
-                        class="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-lg focus:ring-blue-500 focus:border-blue-500">
-                    <input type="password" placeholder="Senha"
-                        class="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-lg focus:ring-blue-500 focus:border-blue-500">
-                    <button type="submit"
-                        class="w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">Entrar</button>
-                    <a href="#" class="block text-sm text-slate-500 hover:underline pt-2">Esqueci minha senha</a>
-                </form>
+        <div id="login-page" class="view w-full h-full flex-col items-center justify-center bg-slate-100 p-4">
+            <div class="w-full max-w-sm">
+                <div class="bg-white p-8 rounded-2xl shadow-lg text-center">
+                    <h1 class="text-3xl font-bold text-blue-600 mb-2">Login</h1>
+                    <p id="login-subtitle" class="text-slate-600 mb-8"></p>
+                    <form id="login-form" class="space-y-4">
+                        <input type="email" placeholder="Email" class="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-lg">
+                        <input type="password" placeholder="Senha" class="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-lg">
+                        <button type="submit" class="w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">Entrar</button>
+                        <a href="#" class="block text-sm text-slate-500 hover:underline pt-2">Esqueci minha senha</a>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Container da Aplicação -->
-    <div id="app" class="view hidden w-full h-screen flex-col">
-        <main id="main-content" class="flex-1 overflow-y-auto main-content bg-slate-50 pb-20">
-            <!-- A view de swipe será renderizada aqui -->
+    <!-- Container Principal da Aplicação -->
+    <div id="app-container" class="app-container hidden">
+        <header id="top-bar" class="top-bar">
+            <h1 class="text-xl font-bold text-center text-blue-600">RH+</h1>
+        </header>
+        <main id="main-content" class="main-content">
+            <!-- As views (swipe, chat, etc.) serão injetadas aqui -->
         </main>
-        <nav id="bottom-nav" class="bg-white border-t grid grid-cols-4 fixed bottom-0 w-full z-10">
-            <!-- Os botões de navegação serão renderizados aqui -->
+        <nav id="bottom-nav" class="bottom-nav">
+            <!-- Os botões de navegação serão injetados aqui -->
         </nav>
     </div>
 
     <!-- Overlay de Match -->
-    <div id="match-overlay"
-        class="hidden fixed inset-0 z-50 flex-col items-center justify-center text-center p-8 match-overlay">
-        <h2 class="text-6xl font-extrabold text-white" style="text-shadow: 0 0 20px #3b82f6, 0 0 30px #2563eb;">Conexão
-            Realizada!</h2>
-        <p class="text-blue-200 mt-2 mb-8">Você e <span id="match-name" class="font-bold"></span> agora estão
-            conectados.</p>
-        <div class="flex items-center gap-4">
-            <img id="match-img-1" src="" class="w-24 h-24 rounded-full border-4 border-white shadow-lg">
-            <i data-lucide="handshake" class="w-10 h-10 text-blue-300"></i>
-            <img id="match-img-2" src="" class="w-24 h-24 rounded-full border-4 border-white shadow-lg">
-        </div>
-        <div class="mt-10 w-full max-w-xs space-y-4">
-            <button id="go-to-chat-btn" class="w-full py-3 bg-blue-600 text-white font-semibold rounded-xl">Iniciar
-                Conversa</button>
-            <button id="keep-swiping-btn"
-                class="w-full py-3 bg-transparent border-2 border-white/50 text-white/80 font-semibold rounded-xl">Continuar
-                Buscando</button>
-        </div>
+    <div id="match-overlay" class="match-overlay hidden">
+        <!-- ... (conteúdo do overlay de match) ... -->
     </div>
 
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // --- STATE MANAGEMENT ---
-            let userType = ''; // 'candidate' or 'company'
-            let currentUser = {};
-            let cardsData = [];
-            let currentCardIndex = 0;
-
-            // --- DOM ELEMENTS ---
-            const views = {
-                welcome: document.getElementById('welcome-page'),
-                login: document.getElementById('login-page'),
-                app: document.getElementById('app'),
-            };
-            const loginSubtitle = document.getElementById('login-subtitle');
-            const loginForm = document.getElementById('login-form');
-            const mainContent = document.getElementById('main-content');
-            const bottomNav = document.getElementById('bottom-nav');
-            const matchOverlay = document.getElementById('match-overlay');
-
-            // --- MOCK DATA ---
-            const jobCardsData = [
-                { id: 1, company: 'NuvemCo', title: 'Engenheiro de Software Sênior', description: 'Lidere o desenvolvimento de nossa plataforma de nuvem de última geração.', skills: ['Go', 'Kubernetes', 'AWS', 'Microserviços'], logo: 'https://placehold.co/96x96/6d28d9/ffffff?text=NuvemCo' },
-                { id: 2, company: 'InovaTech', title: 'Designer de Produto Pleno', description: 'Crie experiências incríveis para milhões de usuários em nossos aplicativos.', skills: ['Figma', 'UX Research', 'Design System'], logo: 'https://placehold.co/96x96/1d4ed8/ffffff?text=Inova' },
-                { id: 3, company: 'DataSys', title: 'Cientista de Dados', description: 'Trabalhe com grandes volumes de dados para extrair insights valiosos.', skills: ['Python', 'SQL', 'Machine Learning'], logo: 'https://placehold.co/96x96/059669/ffffff?text=Data' },
-            ];
-            const candidateCardsData = [
-                { id: 101, name: 'Ana Silva', title: 'Desenvolvedora Frontend', bio: 'Apaixonada por criar interfaces reativas e acessíveis com React e Vue.', skills: ['React', 'TypeScript', 'Next.js', 'CSS-in-JS'], photo: 'https://placehold.co/96x96/f472b6/ffffff?text=A' },
-                { id: 102, name: 'Bruno Costa', title: 'Engenheiro de DevOps', bio: 'Especialista em automação de infraestrutura e CI/CD na nuvem AWS.', skills: ['AWS', 'Terraform', 'Docker', 'CI/CD'], photo: 'https://placehold.co/96x96/fb923c/ffffff?text=B' },
-                { id: 103, name: 'Carla Dias', title: 'Gerente de Projetos Ágeis', bio: 'Liderando equipes para entregar produtos de alto impacto com Scrum e Kanban.', skills: ['Scrum', 'Jira', 'Gestão de Pessoas'], photo: 'https://placehold.co/96x96/60a5fa/ffffff?text=C' },
-            ];
-            const users = {
-                candidate: { name: 'Carlos', photo: 'https://placehold.co/96x96/e2e8f0/475569?text=C' },
-                company: { name: 'NuvemCo', photo: 'https://placehold.co/96x96/6d28d9/ffffff?text=NuvemCo' }
-            };
-
-            // --- INITIALIZATION ---
-            document.querySelectorAll('.welcome-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    userType = e.target.dataset.usertype;
-                    loginSubtitle.textContent = userType === 'company' ? 'Acesse para encontrar talentos.' : 'Acesse para encontrar sua próxima vaga.';
-                    switchView('login');
-                });
-            });
-
-            loginForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                currentUser = users[userType];
-                cardsData = userType === 'candidate' ? [...jobCardsData] : [...candidateCardsData];
-                setupAppUI();
-                switchView('app');
-            });
-
-            // --- UI & NAVIGATION ---
-            function setupAppUI() {
-                mainContent.innerHTML = `
-                    <div id="swipe-view" class="view active h-full flex-col">
-                        <div class="p-4 border-b bg-white flex-shrink-0">
-                            <h1 class="text-xl font-bold text-center text-blue-600">RH+</h1>
-                        </div>
-                        <div class="flex-1 flex flex-col items-center justify-center p-4 overflow-hidden">
-                            <div id="card-stack" class="relative w-full max-w-md h-full flex-1"></div>
-                        </div>
-                        <div class="flex-shrink-0 flex justify-center items-center gap-6 py-4">
-                            <button class="swipe-action-btn bg-white rounded-full w-20 h-20 flex items-center justify-center shadow-lg" data-action="reject"><i data-lucide="x" class="w-10 h-10 text-red-500"></i></button>
-                            <button class="swipe-action-btn bg-white rounded-full w-20 h-20 flex items-center justify-center shadow-lg" data-action="like"><i data-lucide="check" class="w-10 h-10 text-green-500"></i></button>
-                        </div>
-                    </div>
-                    <div id="chat-view" class="view hidden h-full flex-col bg-slate-50">
-                        <div class="p-4 border-b bg-white flex-shrink-0">
-                            <h1 class="text-xl font-bold text-center text-slate-800">Chat</h1>
-                        </div>
-                        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4">
-                            <p class="text-center text-slate-500 pt-8">Envie uma mensagem para iniciar a conversa.</p>
-                        </div>
-                        <div class="p-4 bg-white border-t">
-                            <form id="chat-form" class="flex items-center gap-2">
-                                <input type="text" id="chat-input" placeholder="Digite sua mensagem..." class="w-full px-4 py-2 bg-slate-100 border border-slate-200 rounded-full focus:ring-blue-500 focus:border-blue-500" autocomplete="off">
-                                <button type="submit" class="bg-blue-600 text-white rounded-full p-3 flex-shrink-0"><i data-lucide="send" class="w-5 h-5"></i></button>
-                            </form>
-                        </div>
-                    </div>
-                    <div id="profile-view" class="view hidden h-full flex-col">
-                        <div class="p-4 border-b bg-white flex-shrink-0">
-                           <h1 class="text-xl font-bold text-center text-slate-800">Meu Perfil</h1>
-                        </div>
-                       <div class="flex-1 overflow-y-auto p-6">
-                            <div class="text-center">
-                                <img src="${currentUser.photo}" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-blue-200">
-                                <h2 class="text-2xl font-bold">${currentUser.name}</h2>
-                                <p class="text-slate-600">${userType === 'candidate' ? 'Candidato' : 'Empresa'}</p>
-                            </div>
-                            <div class="mt-8">
-                               <button class="w-full text-left p-4 bg-white rounded-lg shadow-sm mb-2">Editar Perfil</button>
-                               <button class="w-full text-left p-4 bg-white rounded-lg shadow-sm mb-2">Configurações</button>
-                               <button class="w-full text-left p-4 bg-white rounded-lg shadow-sm text-red-500">Sair</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="connections-view" class="view hidden h-full flex-col items-center justify-center text-center p-8">
-                        <div class="grid grid-cols-2 gap-4 blur-md">
-                            <div class="w-32 h-40 bg-slate-200 rounded-lg"></div>
-                            <div class="w-32 h-40 bg-slate-200 rounded-lg"></div>
-                            <div class="w-32 h-40 bg-slate-200 rounded-lg"></div>
-                            <div class="w-32 h-40 bg-slate-200 rounded-lg"></div>
-                        </div>
-                        <h2 class="text-2xl font-bold text-slate-800 mt-8">Quer ver quem quer se conectar com você?</h2>
-                        <p class="text-slate-600 mb-8">Assine o Plus para desbloquear suas conexões.</p>
-                        <button class="bg-yellow-400 text-slate-800 font-bold py-3 px-8 rounded-lg">Assine o Plus</button>
-                    </div>
-                `;
-                bottomNav.innerHTML = `
-                    <button class="nav-link text-blue-600 py-3 flex flex-col items-center gap-1" data-view="swipe-view"><i data-lucide="layout-grid"></i><span class="text-xs font-medium">Buscar</span></button>
-                    <button class="nav-link text-slate-500 py-3 flex flex-col items-center gap-1" data-view="connections-view"><i data-lucide="handshake"></i><span class="text-xs font-medium">Conexões</span></button>
-                    <button class="nav-link text-slate-500 py-3 flex flex-col items-center gap-1" data-view="chat-view"><i data-lucide="message-square"></i><span class="text-xs font-medium">Chat</span></button>
-                    <button class="nav-link text-slate-500 py-3 flex flex-col items-center gap-1" data-view="profile-view"><i data-lucide="user"></i><span class="text-xs font-medium">Perfil</span></button>
-                `;
-                lucide.createIcons();
-                document.querySelectorAll('.swipe-action-btn').forEach(button => {
-                    button.addEventListener('click', (e) => handleSwipeAction(e.currentTarget.dataset.action));
-                });
-
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    link.addEventListener('click', (e) => {
-                        const viewName = e.currentTarget.dataset.view;
-                        switchMainView(viewName);
-
-                        // Atualiza o estado visual dos links de navegação
-                        document.querySelectorAll('.nav-link').forEach(nav => {
-                            nav.classList.remove('text-blue-600');
-                            nav.classList.add('text-slate-500');
-                        });
-                        e.currentTarget.classList.remove('text-slate-500');
-                        e.currentTarget.classList.add('text-blue-600');
-                    });
-                });
-
-                loadCards();
-
-                // --- CHAT SIMULATION ---
-                const chatForm = document.getElementById('chat-form');
-                const chatInput = document.getElementById('chat-input');
-                const chatMessages = document.getElementById('chat-messages');
-                let messageCounter = 0;
-
-                if (chatForm) {
-                    chatForm.addEventListener('submit', (e) => {
-                        e.preventDefault();
-                        const messageText = chatInput.value.trim();
-                        if (messageText === '') return;
-
-                        if (chatMessages.querySelector('p')) {
-                            chatMessages.innerHTML = '';
-                        }
-
-                        addChatMessage(messageText, 'sent', chatMessages);
-                        chatInput.value = '';
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
-
-                        setTimeout(() => {
-                            const replyText = getSimulatedReply();
-                            addChatMessage(replyText, 'received', chatMessages);
-                            chatMessages.scrollTop = chatMessages.scrollHeight;
-                        }, 1000 + Math.random() * 500);
-                    });
-                }
-            }
-
-            function addChatMessage(text, type, container) {
-                const messageElement = document.createElement('div');
-                const bubbleClasses = type === 'sent'
-                    ? 'bg-blue-600 text-white self-end'
-                    : 'bg-white text-slate-800 self-start';
-                messageElement.className = `flex w-full ${type === 'sent' ? 'justify-end' : 'justify-start'}`;
-                messageElement.innerHTML = `<div class="max-w-xs md:max-w-md p-3 rounded-2xl shadow-sm ${bubbleClasses}">${text}</div>`;
-                container.appendChild(messageElement);
-            }
-
-            function switchView(viewName) {
-                Object.values(views).forEach(v => v.classList.remove('active'));
-                if (views[viewName]) {
-                    views[viewName].classList.add('active');
-                }
-            }
-
-            function switchMainView(viewId) {
-                // Esconde todas as views dentro do #main-content
-                document.querySelectorAll('#main-content .view').forEach(view => {
-                    view.classList.remove('active');
-                    view.classList.add('hidden'); // Garante que a view seja ocultada
-                });
-
-                // Mostra a view solicitada
-                const viewToShow = document.getElementById(viewId);
-                if (viewToShow) {
-                    viewToShow.classList.remove('hidden');
-                    viewToShow.classList.add('active');
-                }
-            }
-
-            // --- CARD SWIPE LOGIC ---
-            let activeCard = null, startX = 0, currentX = 0, isDragging = false;
-
-            function createCardElement(data) {
-                const isJob = 'company' in data;
-                const headerBg = isJob ? 'from-purple-600 to-indigo-600' : 'from-pink-500 to-orange-500';
-                const skillsHTML = data.skills.map(skill => `<span class="bg-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded-full">${skill}</span>`).join('');
-                return `
-                    <div class="card absolute w-full h-full cursor-grab active:cursor-grabbing" data-id="${data.id}">
-                        <div class="w-full h-full bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col">
-                            <div class="bg-gradient-to-br ${headerBg} text-white flex-shrink-0 h-3/5 flex flex-col justify-end p-6">
-                                <p class="font-extrabold text-4xl leading-tight">${isJob ? data.company : data.name}</p>
-                                <p class="text-2xl opacity-90">${data.title}</p>
-                            </div>
-                            <div class="p-6 flex-grow h-2/5 overflow-y-auto">
-                                <h3 class="font-semibold mb-2">${isJob ? 'Competências da Vaga' : 'Principais Competências'}</h3>
-                                <div class="flex flex-wrap gap-2 mb-4">${skillsHTML}</div>
-                                <p class="text-slate-600 text-sm">${isJob ? data.description : data.bio}</p>
-                            </div>
-                        </div>
-                    </div>`;
-            }
-
-            function loadCards() {
-                const cardStack = document.getElementById('card-stack');
-                if (!cardStack) return;
-                currentCardIndex = 0;
-                cardStack.innerHTML = cardsData.map(createCardElement).reverse().join('');
-
-                document.querySelectorAll('.card').forEach(card => {
-                    card.addEventListener('mousedown', (e) => onDragStart(e));
-                    card.addEventListener('touchstart', (e) => onDragStart(e), { passive: true });
-                });
-            }
-
-            function onDragStart(e) {
-                if (currentCardIndex >= cardsData.length || isDragging) return;
-                activeCard = document.querySelector('.card:last-child');
-                if (!activeCard) return;
-
-                startX = e.pageX || e.touches[0].pageX;
-                isDragging = true;
-                activeCard.classList.remove('releasing');
-                document.addEventListener('mousemove', onDragMove);
-                document.addEventListener('touchmove', onDragMove, { passive: true });
-                document.addEventListener('mouseup', onDragEnd);
-                document.addEventListener('touchend', onDragEnd);
-            }
-
-            function onDragMove(e) {
-                if (!isDragging || !activeCard) return;
-                currentX = (e.pageX || e.touches[0].pageX) - startX;
-                activeCard.style.transform = `translateX(${currentX}px) rotate(${currentX * 0.1}deg)`;
-            }
-
-            function onDragEnd() {
-                if (!isDragging || !activeCard) return;
-                isDragging = false;
-                const decisionThreshold = window.innerWidth / 4;
-
-                if (Math.abs(currentX) > decisionThreshold) {
-                    handleSwipeAction(currentX > 0 ? 'like' : 'reject', true);
-                } else {
-                    activeCard.classList.add('releasing');
-                    activeCard.style.transform = '';
-                }
-
-                document.removeEventListener('mousemove', onDragMove);
-                document.removeEventListener('touchmove', onDragMove);
-                document.removeEventListener('mouseup', onDragEnd);
-                document.removeEventListener('touchend', onDragEnd);
-                currentX = 0;
-            }
-
-            function handleSwipeAction(action, fromDrag = false) {
-                if (currentCardIndex >= cardsData.length) return;
-                const cardToRemove = document.querySelector('.card:last-child');
-                if (!cardToRemove) return;
-
-                cardToRemove.style.pointerEvents = 'none';
-                cardToRemove.classList.add('releasing');
-
-                if (fromDrag) {
-                    const finalX = (action === 'like' ? 1 : -1) * (window.innerWidth / 2 + cardToRemove.clientWidth);
-                    cardToRemove.style.transform = `translateX(${finalX}px) rotate(${currentX * 0.1}deg)`;
-                } else {
-                    const rotation = action === 'like' ? 15 : -15;
-                    cardToRemove.style.transform = `translateX(${action === 'like' ? '150%' : '-150%'}) rotate(${rotation}deg)`;
-                }
-
-                setTimeout(() => {
-                    cardToRemove.remove();
-                }, 400);
-
-                const swipedItem = cardsData[currentCardIndex];
-                // *** FIX: Every 'like' is now a match ***
-                if (action === 'like') {
-                    setTimeout(() => showMatch(currentUser, swipedItem), 400);
-                }
-
-                currentCardIndex++;
-                if (currentCardIndex >= cardsData.length) {
-                    setTimeout(() => {
-                        const cardStack = document.getElementById('card-stack');
-                        if (cardStack) {
-                            cardStack.innerHTML = '<p class="text-center text-slate-500 p-8">Não há mais perfis por hoje. Volte amanhã!</p>';
-                        }
-                    }, 500);
-                }
-            }
-
-            // --- MATCH LOGIC ---
-            function showMatch(user1, user2) {
-                const isJob = 'company' in user2;
-                document.getElementById('match-name').textContent = isJob ? user2.company : user2.name;
-                document.getElementById('match-img-1').src = user1.photo;
-                document.getElementById('match-img-2').src = isJob ? user2.logo : user2.photo;
-                matchOverlay.classList.remove('hidden');
-                matchOverlay.classList.add('flex');
-                lucide.createIcons();
-            }
-
-            document.getElementById('keep-swiping-btn').addEventListener('click', () => {
-                matchOverlay.classList.add('hidden');
-                matchOverlay.classList.remove('flex');
-            });
-            document.getElementById('go-to-chat-btn').addEventListener('click', () => {
-                alert("Funcionalidade de Chat a ser implementada nas próximas versões.");
-                matchOverlay.classList.add('hidden');
-                matchOverlay.classList.remove('flex');
-            });
-
-            let messageCounter = 0;
-            function getSimulatedReply() {
-                const replies = [
-                    "Olá! Obrigado pelo contato.",
-                    "Que legal! Pode me contar mais sobre a vaga?",
-                    "Entendi. Quais são os próximos passos?",
-                    "Perfeito! Fico no aguardo.",
-                    "Obrigado!"
-                ];
-                const reply = replies[messageCounter % replies.length];
-                messageCounter++;
-                return reply;
-            }
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>
