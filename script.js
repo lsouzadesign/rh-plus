@@ -47,9 +47,12 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
         currentUser = users[userType];
         cardsData = userType === 'candidate' ? [...jobCardsData] : [...candidateCardsData];
+
+        // Esconde as telas iniciais e mostra o app principal
+        initialScreens.style.display = 'none';
+        appContainer.style.display = 'flex';
+
         setupAppUI();
-        initialScreens.classList.add('hidden');
-        appContainer.classList.remove('hidden');
     });
 
     function switchScreen(screenName) {
