@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- UI & NAVIGATION ---
     function setupAppUI() {
         mainContent.innerHTML = `
-            <div id="swipe-view" class="view active h-full flex-col">
+            <div id="swipe-view" class="view h-full flex-col">
                 <div class="flex-1 flex flex-col items-center justify-center p-4 overflow-hidden">
                     <div id="card-stack" class="relative w-full max-w-md h-full flex-1"></div>
                 </div>
@@ -127,13 +127,17 @@ document.addEventListener('DOMContentLoaded', function () {
             link.addEventListener('click', (e) => {
                 const viewName = e.currentTarget.dataset.view;
                 switchMainView(viewName);
-                document.querySelectorAll('.nav-link').forEach(nav => nav.classList.add('text-slate-500'));
+        document.querySelectorAll('.nav-link').forEach(nav => {
+            nav.classList.remove('text-blue-600');
+            nav.classList.add('text-slate-500');
+        });
                 e.currentTarget.classList.remove('text-slate-500');
                 e.currentTarget.classList.add('text-blue-600');
             });
         });
 
         loadCards();
+switchMainView('swipe-view'); // Garante que a visualização inicial seja exibida
 
         const chatForm = document.getElementById('chat-form');
         const chatInput = document.getElementById('chat-input');
@@ -163,6 +167,17 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- CARD SWIPE LOGIC ---
+    function loadCards() {
+        const cardStack = document.getElementById('card-stack');
+        if (!cardStack) return;
+        currentCardIndex = 0;
+        cardStack.innerHTML = cardsData.map(createCardElement).reverse().join('');
+
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mousedown', (e) => onDragStart(e));
+            card.addEventListener('touchstart', (e) => onDragStart(e), { passive: true });
+        });
+    }
     // ... (toda a lógica de arrastar e soltar do cartão permanece a mesma)
 
     // --- MATCH LOGIC ---
