@@ -160,9 +160,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function switchMainView(viewId) {
-        document.querySelectorAll('#main-content .view').forEach(view => view.classList.remove('active'));
+        document.querySelectorAll('#main-content .view').forEach(view => {
+            view.classList.add('hidden');
+            view.classList.remove('active');
+        });
         const viewToShow = document.getElementById(viewId);
-        if (viewToShow) viewToShow.classList.add('active');
+        if (viewToShow) {
+            viewToShow.classList.remove('hidden');
+            viewToShow.classList.add('active');
+        }
     }
 
     // --- CARD SWIPE LOGIC ---
