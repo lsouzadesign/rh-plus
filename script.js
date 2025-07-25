@@ -49,8 +49,8 @@ document.addEventListener('DOMContentLoaded', function () {
         cardsData = userType === 'candidate' ? [...jobCardsData] : [...candidateCardsData];
 
         // Esconde as telas iniciais e mostra o app principal
-        initialScreens.style.display = 'none';
-        appContainer.style.display = 'flex';
+        initialScreens.classList.add('hidden');
+        appContainer.classList.remove('hidden');
 
         setupAppUI();
     });
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- UI & NAVIGATION ---
     function setupAppUI() {
         mainContent.innerHTML = `
-            <div id="swipe-view" class="view h-full flex-col">
+            <div id="swipe-view" class="view active h-full flex-col">
                 <div class="flex-1 flex flex-col items-center justify-center p-4 overflow-hidden">
                     <div id="card-stack" class="relative w-full max-w-md h-full flex-1"></div>
                 </div>
